@@ -5,6 +5,7 @@
 #include "Eagle.h"
 #include "Brick.h"
 #include "Wall.h"
+#include "Player.h"
 
 class Scene : public QGraphicsScene
 {
@@ -15,12 +16,15 @@ public:
 
 signals:
 
+
 private:
     Eagle *eagle;
     Brick *brick;
     Brick *brickFirst;
     Wall *wall;
-
+    Player *player;
+protected:
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // SCENE_H

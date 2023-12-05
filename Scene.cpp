@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include <QGraphicsScene>
+#include <QKeyEvent>
+#include <QList>
 
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}
@@ -88,6 +90,13 @@ Scene::Scene(QObject *parent)
     setBrickwall(0-brick->boundingRect().width()*2-10,217,1,4);
     setBrickwall(0-brick->boundingRect().width()*2-10,197,6,1);
     setBrickwall(51,217,1,4);
+
+    //new出player
+    player = new Player();
+    player->setPos(-140,250);
+    addItem(player);
+    player->setZValue(1);//使player always在前景
+
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -103,5 +112,60 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
         }
         brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
     }
-
 }
+
+//控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
+void Scene::keyPressEvent(QKeyEvent *event){
+
+    QPointF pos = player->pos();
+    if(event->key() == Qt::Key_Left && pos.x()>(-600)){
+        player->setRotation(-90);
+        player->setPos(pos+QPointF(-5,0));
+        QList<QGraphicsItem *> colliding_items = player->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            if(brick || wall){
+                player->setPos(pos+QPointF(5,0));
+                return;
+            }
+        }
+    }else if(event->key() == Qt::Key_Right && pos.x()<(570)){
+        player->setRotation(90);
+        player->setPos(pos+QPointF(5,0));
+        QList<QGraphicsItem *> colliding_items = player->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            if(brick||wall){
+                player->setPos(pos+QPointF(-5,0));
+                return;
+            }
+        }
+    }else if(event->key() == Qt::Key_Up && pos.y()>(-300)){
+        player->setRotation(0);
+        player->setPos(pos+QPointF(0,-5));
+        QList<QGraphicsItem *> colliding_items = player->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            if(brick||wall){
+                player->setPos(pos+QPointF(0,5));
+                return;
+            }
+        }
+    }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
+        player->setRotation(180);
+        player->setPos(pos+QPointF(0,5));
+        QList<QGraphicsItem *> colliding_items = player->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            if(brick||wall){
+                player->setPos(pos+QPointF(0,-5));
+                return;
+            }
+        }
+    }
+}
+

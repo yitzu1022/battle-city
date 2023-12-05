@@ -4,5 +4,6 @@
         <file>brick.png</file>
         <file>wall.jpg</file>
         <file>Eagle.png</file>
+        <file>tank.png</file>
     </qresource>
 </RCC>
