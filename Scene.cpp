@@ -126,7 +126,7 @@ void Scene::keyPressEvent(QKeyEvent *event){
             Brick *brick = dynamic_cast<Brick*>(item);
             Wall *wall = dynamic_cast<Wall*>(item);
             if(brick || wall){
-                player->setPos(pos+QPointF(5,0));
+                player->setPos(pos);
                 return;
             }
         }
@@ -138,7 +138,7 @@ void Scene::keyPressEvent(QKeyEvent *event){
             Brick *brick = dynamic_cast<Brick*>(item);
             Wall *wall = dynamic_cast<Wall*>(item);
             if(brick||wall){
-                player->setPos(pos+QPointF(-5,0));
+                player->setPos(pos);
                 return;
             }
         }
@@ -150,7 +150,7 @@ void Scene::keyPressEvent(QKeyEvent *event){
             Brick *brick = dynamic_cast<Brick*>(item);
             Wall *wall = dynamic_cast<Wall*>(item);
             if(brick||wall){
-                player->setPos(pos+QPointF(0,5));
+                player->setPos(pos);
                 return;
             }
         }
@@ -162,7 +162,7 @@ void Scene::keyPressEvent(QKeyEvent *event){
             Brick *brick = dynamic_cast<Brick*>(item);
             Wall *wall = dynamic_cast<Wall*>(item);
             if(brick||wall){
-                player->setPos(pos+QPointF(0,-5));
+                player->setPos(pos);
                 return;
             }
         }
