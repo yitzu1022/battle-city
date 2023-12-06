@@ -121,50 +121,23 @@ void Scene::keyPressEvent(QKeyEvent *event){
     if(event->key() == Qt::Key_Left && pos.x()>(-600)){
         player->setRotation(-90);
         player->setPos(pos+QPointF(-5,0));
-        QList<QGraphicsItem *> colliding_items = player->collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            if(brick || wall){
-                player->setPos(pos);
-                return;
-            }
-        }
     }else if(event->key() == Qt::Key_Right && pos.x()<(570)){
         player->setRotation(90);
         player->setPos(pos+QPointF(5,0));
-        QList<QGraphicsItem *> colliding_items = player->collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            if(brick||wall){
-                player->setPos(pos);
-                return;
-            }
-        }
     }else if(event->key() == Qt::Key_Up && pos.y()>(-300)){
         player->setRotation(0);
         player->setPos(pos+QPointF(0,-5));
-        QList<QGraphicsItem *> colliding_items = player->collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            if(brick||wall){
-                player->setPos(pos);
-                return;
-            }
-        }
     }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
         player->setRotation(180);
         player->setPos(pos+QPointF(0,5));
-        QList<QGraphicsItem *> colliding_items = player->collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            if(brick||wall){
-                player->setPos(pos);
-                return;
-            }
+    }
+    QList<QGraphicsItem *> colliding_items = player->collidingItems();
+    foreach (QGraphicsItem* item,colliding_items) {
+        Brick *brick = dynamic_cast<Brick*>(item);
+        Wall *wall = dynamic_cast<Wall*>(item);
+        if(brick || wall){
+            player->setPos(pos);
+            return;
         }
     }
 }
