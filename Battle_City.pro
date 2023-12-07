@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     Brick.cpp \
     Eagle.cpp \
+    Enemy.cpp \
     Player.cpp \
     Scene.cpp \
     Wall.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     Brick.h \
     Eagle.h \
+    Enemy.h \
     Player.h \
     Scene.h \
     Wall.h \

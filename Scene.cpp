@@ -1,7 +1,9 @@
 #include "Scene.h"
 #include <QGraphicsScene>
 #include <QKeyEvent>
+#include <QTimer>
 #include <QList>
+#include <stdlib.h>
 
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}
@@ -97,6 +99,14 @@ Scene::Scene(QObject *parent)
     addItem(player);
     player->setZValue(1);//使player always在前景
 
+    //new出enemy
+    enemyCounter = 0 ;
+    spawnEnemy() ;
+
+    timer = new QTimer() ;
+    connect(timer , &QTimer::timeout , this ,&Scene::spawnEnemy );
+    timer->start(2000) ;
+
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -113,6 +123,21 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
         brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
     }
 }
+
+void Scene::spawnEnemy()
+{
+    if(enemyCounter >= 4) //同時在場的enemy最多4個
+        return;
+    Enemy *enemy = new Enemy() ;
+    enemy->setPos(rand()%1170-600 , -250 );
+    addItem(enemy);
+    enemy->setZValue(1);//使enemy always在前景
+    enemyCounter++;
+    qDebug() << "Counter:"<<enemyCounter;
+}
+
+
+
 
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
 void Scene::keyPressEvent(QKeyEvent *event){
@@ -135,7 +160,8 @@ void Scene::keyPressEvent(QKeyEvent *event){
     foreach (QGraphicsItem* item,colliding_items) {
         Brick *brick = dynamic_cast<Brick*>(item);
         Wall *wall = dynamic_cast<Wall*>(item);
-        if(brick || wall){
+        Enemy *enemy = dynamic_cast<Enemy*>(item);
+        if(brick || wall || enemy){
             player->setPos(pos);
             return;
         }
