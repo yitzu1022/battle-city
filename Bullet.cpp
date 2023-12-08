@@ -38,6 +38,7 @@ void Bullet::move() {
     // Move the bullet up
     // Should be change by direction
     // if direction .....
+<<<<<<< HEAD
     //setPos(x(), y()-10);
     int dx;
     dx=10*qCos(qDegreesToRadians(rotation()-90));
@@ -65,3 +66,9 @@ void Bullet::setRotation(qreal newRotation)
     setTransform(t); //apply 此 transformation
 }
 
+=======
+    setPos(x(), y()-10);
+
+
+}
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82

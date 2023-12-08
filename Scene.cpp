@@ -193,7 +193,10 @@ void Scene::keyPressEvent(QKeyEvent *event){
         connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
         connect(bullet, &Bullet::bulletHitsPlayer, this, &Scene::loseOneLife);
         bullet->setPos(player->pos());
+<<<<<<< HEAD
         bullet->setRotation(player->rotation());
+=======
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
         addItem(bullet);
     }
 

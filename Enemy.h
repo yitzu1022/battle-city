@@ -15,7 +15,10 @@ class Enemy : public QObject,public QGraphicsPixmapItem
 public:
     explicit Enemy(QObject *parent = nullptr);
     void setRotation(qreal newRotation);
+<<<<<<< HEAD
     qreal rotation() const;
+=======
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
 
 public slots: //slots function
     void move();
@@ -27,7 +30,10 @@ private:
     QTimer *timer ;
     QTimer *shootTimer;
     int counter ;
+<<<<<<< HEAD
     qreal m_rotation;
+=======
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
 
 
 };

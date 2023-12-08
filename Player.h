@@ -17,7 +17,11 @@ public:
 signals:
 
 private:
+<<<<<<< HEAD
     qreal m_rotation;
+=======
+
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
 };
 
 #endif // PLAYER_H

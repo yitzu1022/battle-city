@@ -15,8 +15,11 @@ class Bullet : public QObject, public QGraphicsPixmapItem
 public:
     Bullet(bool isMyBullet = false);
     bool isMine(){return isMyBullet;}
+<<<<<<< HEAD
     void setRotation(qreal newRotation);
     qreal rotation() const;
+=======
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
 
 private slots:
     void move();
@@ -31,7 +34,10 @@ signals:
 private:
     QTimer *timer;
     bool isMyBullet;
+<<<<<<< HEAD
     qreal m_rotation;
+=======
+>>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
 };
 
 #endif // BULLET_H
