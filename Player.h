@@ -11,13 +11,13 @@ class Player : public QObject,public QGraphicsPixmapItem
     Q_OBJECT
 public:
     explicit Player(QObject *parent = nullptr);
+    qreal rotation() const;
     void setRotation(qreal newRotation);
 
 signals:
 
 private:
-
-
+    qreal m_rotation;
 };
 
 #endif // PLAYER_H

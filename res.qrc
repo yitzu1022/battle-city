@@ -5,5 +5,7 @@
         <file>wall.jpg</file>
         <file>Eagle.png</file>
         <file>tank.png</file>
+        <file>enemy.png</file>
+        <file>bullet.png</file>
     </qresource>
 </RCC>
