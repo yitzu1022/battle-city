@@ -2,12 +2,14 @@
 #include "Brick.h"
 #include "Wall.h"
 #include "Player.h"
+#include "Bullet.h"
 #include <QGraphicsScene>
 #include <QList>
 #include <stdlib.h>
+#include <QRandomGenerator>
 
 Enemy::Enemy(QObject *parent)
-    : QObject{parent}
+    : QObject{parent}, shootTimer(new QTimer(this))
 {
     setPixmap(QPixmap(":/images/enemy.png"));
 
@@ -15,6 +17,11 @@ Enemy::Enemy(QObject *parent)
     //connect(發出signal的人是誰,發出甚麼訊號,誰來處理signal,用哪個slot function處理)
     connect(timer , &QTimer::timeout , this ,&Enemy::move );//把signal和slot function串接再一起
     timer->start(150);//每150ms會啟動一次timer
+
+    //bullet shooting timer
+    connect(shootTimer, &QTimer::timeout, this, &Enemy::shootBullet);
+    int interval = QRandomGenerator::global()->bounded(1000, 5000); // 1 to 5 seconds
+    shootTimer->start(interval);
 
 }
 
@@ -98,4 +105,10 @@ void Enemy::move()
 
 
 
+}
+
+void Enemy::shootBullet() {
+    Bullet *bullet = new Bullet(false);
+    bullet->setPos(pos());
+    scene()->addItem(bullet);
 }

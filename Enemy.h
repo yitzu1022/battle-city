@@ -18,10 +18,13 @@ public:
 
 public slots: //slots function
     void move();
+    void shootBullet(); // Enemy will randomly call shootBullet()
+
 signals :
 
 private:
     QTimer *timer ;
+    QTimer *shootTimer;
     int counter ;
 
 

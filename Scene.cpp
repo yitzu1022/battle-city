@@ -124,20 +124,51 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
     }
 }
 
+void Scene::handleBrickDeleted(Bullet *bullet, Brick *brick){
+    removeItem(bullet);
+    delete bullet;
+    removeItem(brick);
+    delete brick;
+}
+
+void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
+{
+    clear();
+}
+
+void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
+{
+    removeItem(bullet);
+    delete bullet;
+    removeItem(enemy);
+    delete enemy;
+}
+
+void Scene::loseOneLife(Bullet *bullet, Player *player)
+{
+    removeItem(bullet);
+    delete bullet;
+    removeItem(player);
+    delete player;
+
+    // if still have life
+    player = new Player();
+    player->setPos(-140,250);
+    addItem(player);
+    player->setZValue(1);//使player always在前景
+}
+
 void Scene::spawnEnemy()
 {
     if(enemyCounter >= 4) //同時在場的enemy最多4個
         return;
-    Enemy *enemy = new Enemy() ;
+    Enemy *enemy = new Enemy();
     enemy->setPos(rand()%1170-600 , -250 );
     addItem(enemy);
     enemy->setZValue(1);//使enemy always在前景
     enemyCounter++;
     qDebug() << "Counter:"<<enemyCounter;
 }
-
-
-
 
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
 void Scene::keyPressEvent(QKeyEvent *event){
@@ -155,7 +186,16 @@ void Scene::keyPressEvent(QKeyEvent *event){
     }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
         player->setRotation(180);
         player->setPos(pos+QPointF(0,5));
+    }else if (event->key() == Qt::Key_Space) {
+        Bullet *bullet = new Bullet(true);
+        connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
+        connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
+        connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
+        connect(bullet, &Bullet::bulletHitsPlayer, this, &Scene::loseOneLife);
+        bullet->setPos(player->pos());
+        addItem(bullet);
     }
+
     QList<QGraphicsItem *> colliding_items = player->collidingItems();
     foreach (QGraphicsItem* item,colliding_items) {
         Brick *brick = dynamic_cast<Brick*>(item);

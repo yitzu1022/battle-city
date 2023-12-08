@@ -17,7 +17,6 @@ signals:
 
 private:
 
-
 };
 
 #endif // PLAYER_H

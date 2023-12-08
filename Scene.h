@@ -7,6 +7,7 @@
 #include "Brick.h"
 #include "Wall.h"
 #include "Player.h"
+#include "Bullet.h"
 
 class Scene : public QGraphicsScene
 {
@@ -14,8 +15,14 @@ class Scene : public QGraphicsScene
 public:
     explicit Scene(QObject *parent = nullptr);
     void setBrickwall(int brickFirst_x,int brickFirst_y,int num_x,int num_y);
+
     void spawnEnemy() ;
+
 public slots: //slots function
+    void handleBrickDeleted(Bullet *bullet, Brick *brick);
+    void GameEndded(Bullet *bullet, Eagle *eagle);
+    void enemyDestroy(Bullet *bullet, Enemy *enemy);
+    void loseOneLife(Bullet *bullet, Player *player);
 
 signals:
 
