@@ -25,7 +25,6 @@ Enemy::Enemy(QObject *parent)
 
 }
 
-<<<<<<< HEAD
 qreal Enemy::rotation() const
 {
     return m_rotation;
@@ -35,11 +34,6 @@ qreal Enemy::rotation() const
 void Enemy::setRotation(qreal newRotation)
 {
     m_rotation = newRotation;
-=======
-//轉動enemy的方向
-void Enemy::setRotation(qreal newRotation)
-{
->>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
     //以中心點進行旋轉
     QPointF c =boundingRect().center(); //取得圖片中心點
     QTransform t; //用Qtransform此object來進行旋轉
@@ -122,9 +116,6 @@ void Enemy::move()
 void Enemy::shootBullet() {
     Bullet *bullet = new Bullet(false);
     bullet->setPos(pos());
-<<<<<<< HEAD
     bullet->setRotation(rotation());
-=======
->>>>>>> ca69e8e2c571cfcdcb483cf913a4679b793fcf82
     scene()->addItem(bullet);
 }

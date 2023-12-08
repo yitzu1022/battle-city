@@ -17,9 +17,7 @@ public:
 signals:
 
 private:
-
     qreal m_rotation;
-
 };
 
 #endif // PLAYER_H
