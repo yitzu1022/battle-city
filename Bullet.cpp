@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include "Player.h"
 
 #include <QGraphicsScene>
 
@@ -12,6 +13,14 @@ Bullet::Bullet(bool isMyBullet): isMyBullet(isMyBullet)
 }
 
 void Bullet::move() {
+    // Check if the bullet is out of the scene
+    if (scene() == nullptr || !scene()->sceneRect().contains(pos())) {
+        // Remove the bullet from the scene first
+        scene()->removeItem(this);
+        qDebug("bullet deleted");
+        delete this;
+        return;
+    }
 
     // If the bullet collides either Brick, Eagle, Enemy or Player, destroy both
     // if the bullet is out of Scene, it also should be delete ...add
@@ -29,8 +38,16 @@ void Bullet::move() {
             emit bulletHitsEnemy(this, dynamic_cast<Enemy *>(item));
             return;
         }
+//        else if (dynamic_cast<Enemy *>(item) && isMine() == false) {
+//            emit bulletDeleted(this);
+//            return;
+//        }
         else if (dynamic_cast<Player *>(item) && isMine() == false) {
             emit bulletHitsPlayer(this, dynamic_cast<Player *>(item));
+            return;
+        }
+        else if (dynamic_cast<Bullet *>(item)){ // bullet hits bullet
+            emit bullet_bullet(this, dynamic_cast<Bullet *>(item));
             return;
         }
     }

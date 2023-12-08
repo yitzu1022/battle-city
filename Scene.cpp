@@ -151,11 +151,17 @@ void Scene::loseOneLife(Bullet *bullet, Player *player)
     removeItem(player);
     delete player;
 
+    qDebug("player deleted");
     // if still have life
     player = new Player();
     player->setPos(-140,250);
     addItem(player);
-    player->setZValue(1);//使player always在前景
+}
+
+void Scene::handleBulletDeleted(Bullet *bullet)
+{
+    removeItem(bullet);
+    delete bullet;
 }
 
 void Scene::spawnEnemy()
@@ -191,7 +197,7 @@ void Scene::keyPressEvent(QKeyEvent *event){
         connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
         connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
         connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
-        connect(bullet, &Bullet::bulletHitsPlayer, this, &Scene::loseOneLife);
+        connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
         bullet->setPos(player->pos());
         bullet->setRotation(player->rotation());
         addItem(bullet);

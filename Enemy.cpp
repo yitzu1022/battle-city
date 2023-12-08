@@ -3,6 +3,7 @@
 #include "Wall.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "Scene.h"
 #include <QGraphicsScene>
 #include <QList>
 #include <stdlib.h>
@@ -115,7 +116,13 @@ void Enemy::move()
 
 void Enemy::shootBullet() {
     Bullet *bullet = new Bullet(false);
+    Scene *scene = dynamic_cast<Scene*>(this->scene());
+    connect(bullet, &Bullet::bulletHitsBrick, scene, &Scene::handleBrickDeleted);
+    connect(bullet, &Bullet::bulletHitsEagle, scene, &Scene::GameEndded);
+    connect(bullet, &Bullet::bulletHitsPlayer, scene, &Scene::loseOneLife);
+//    connect(bullet, &Bullet::bulletDeleted, scene, &Scene::handleBulletDeleted); // Enemy's bullet hit
+    connect(bullet, &Bullet::bullet_bullet, scene, &Scene::handleBulletDeleted); // bullets' hit
     bullet->setPos(pos());
     bullet->setRotation(rotation());
-    scene()->addItem(bullet);
+    scene->addItem(bullet);
 }

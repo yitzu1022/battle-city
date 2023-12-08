@@ -16,6 +16,7 @@ public:
     explicit Scene(QObject *parent = nullptr);
     void setBrickwall(int brickFirst_x,int brickFirst_y,int num_x,int num_y);
 
+
     void spawnEnemy() ;
 
 public slots: //slots function
@@ -23,6 +24,7 @@ public slots: //slots function
     void GameEndded(Bullet *bullet, Eagle *eagle);
     void enemyDestroy(Bullet *bullet, Enemy *enemy);
     void loseOneLife(Bullet *bullet, Player *player);
+    void handleBulletDeleted(Bullet *bullet);
 
 signals:
 
@@ -36,6 +38,7 @@ private:
     Enemy *enemy;
     QTimer *timer ;
     int enemyCounter;
+
 
 protected:
     void keyPressEvent(QKeyEvent *event);
