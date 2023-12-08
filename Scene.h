@@ -41,6 +41,7 @@ private:
     int enemyslain = 0;
 
 
+
 protected:
     void keyPressEvent(QKeyEvent *event);
 };
