@@ -124,11 +124,57 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
     }
 }
 
+void Scene::handleBrickDeleted(Bullet *bullet, Brick *brick){
+    removeItem(bullet);
+    delete bullet;
+    removeItem(brick);
+    delete brick;
+}
+
+void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
+{
+    clear();
+}
+
+void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
+{
+    removeItem(bullet);
+    delete bullet;
+    removeItem(enemy);
+    delete enemy;
+    enemyslain++;
+    qDebug() << "Enemyslain:"<<enemyslain;
+    enemyCounter --;
+    spawnEnemy();
+}
+
+void Scene::loseOneLife(Bullet *bullet, Player *player)
+{
+    removeItem(bullet);
+    delete bullet;
+    removeItem(player);
+    delete player;
+
+    qDebug("player deleted");
+    // if still have life
+    player = new Player();
+    player->setPos(-140,250);
+    addItem(player);
+}
+
+void Scene::handleBulletDeleted(Bullet *bullet)
+{
+    removeItem(bullet);
+    delete bullet;
+}
+
 void Scene::spawnEnemy()
 {
+    if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
+        return;
     if(enemyCounter >= 4) //同時在場的enemy最多4個
         return;
-    Enemy *enemy = new Enemy() ;
+    Enemy *enemy = new Enemy();
     enemy->setPos(rand()%1170-600 , -250 );
     addItem(enemy);
     enemy->setZValue(1);//使enemy always在前景
@@ -136,15 +182,12 @@ void Scene::spawnEnemy()
     qDebug() << "Counter:"<<enemyCounter;
 }
 
-
-
-
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
 void Scene::keyPressEvent(QKeyEvent *event){
 
     QPointF pos = player->pos();
     if(event->key() == Qt::Key_Left && pos.x()>(-600)){
-        player->setRotation(-90);
+        player->setRotation(270);
         player->setPos(pos+QPointF(-5,0));
     }else if(event->key() == Qt::Key_Right && pos.x()<(570)){
         player->setRotation(90);
@@ -155,7 +198,17 @@ void Scene::keyPressEvent(QKeyEvent *event){
     }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
         player->setRotation(180);
         player->setPos(pos+QPointF(0,5));
+    }else if (event->key() == Qt::Key_Space) {
+        Bullet *bullet = new Bullet(true);
+        connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
+        connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
+        connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
+        connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
+        bullet->setPos(player->pos());
+        bullet->setRotation(player->rotation());
+        addItem(bullet);
     }
+
     QList<QGraphicsItem *> colliding_items = player->collidingItems();
     foreach (QGraphicsItem* item,colliding_items) {
         Brick *brick = dynamic_cast<Brick*>(item);
