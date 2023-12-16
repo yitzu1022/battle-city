@@ -7,5 +7,6 @@
         <file>tank.png</file>
         <file>enemy.png</file>
         <file>bullet.png</file>
+        <file>heartbeat.png</file>
     </qresource>
 </RCC>

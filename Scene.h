@@ -8,6 +8,7 @@
 #include "Wall.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "Skill.h"
 
 class Scene : public QGraphicsScene
 {
@@ -25,9 +26,10 @@ public slots: //slots function
     void enemyDestroy(Bullet *bullet, Enemy *enemy);
     void loseOneLife(Bullet *bullet, Player *player);
     void handleBulletDeleted(Bullet *bullet);
+    void addOneLife(Player *player, Skill *skill);
 
 signals:
-
+    void addLife(Player *player, Skill *skill);
 
 private:
     Eagle *eagle;

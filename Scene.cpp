@@ -106,7 +106,6 @@ Scene::Scene(QObject *parent)
     timer = new QTimer() ;
     connect(timer , &QTimer::timeout , this ,&Scene::spawnEnemy );
     timer->start(2000) ;
-
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -138,6 +137,12 @@ void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
 
 void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
 {
+    Skill *skill = new Skill();
+    skill->setPos(enemy->pos());
+    connect(this, &Scene::addLife, this, &Scene::addOneLife);
+    addItem(skill);
+    skill->setZValue(1);
+
     removeItem(bullet);
     delete bullet;
     removeItem(enemy);
@@ -166,6 +171,12 @@ void Scene::handleBulletDeleted(Bullet *bullet)
 {
     removeItem(bullet);
     delete bullet;
+}
+
+void Scene::addOneLife(Player *player, Skill *skill)
+{
+    // add one life
+    qDebug("add one life");
 }
 
 void Scene::spawnEnemy()
@@ -214,9 +225,18 @@ void Scene::keyPressEvent(QKeyEvent *event){
         Brick *brick = dynamic_cast<Brick*>(item);
         Wall *wall = dynamic_cast<Wall*>(item);
         Enemy *enemy = dynamic_cast<Enemy*>(item);
+        Skill *skill = dynamic_cast<Skill*>(item);
         if(brick || wall || enemy){
             player->setPos(pos);
             return;
+        }else if (skill){
+            if(skill->getSkillType() == "add_life"){
+                emit addLife(player, skill);
+            }else{
+                qDebug("error");
+            }
+            removeItem(skill);
+            delete skill;
         }
     }
 }
