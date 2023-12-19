@@ -3,11 +3,18 @@
 #include <QKeyEvent>
 #include <QTimer>
 #include <QList>
+#include <QFont>
 #include <stdlib.h>
-
-Scene::Scene(QObject *parent)
+#include <QPushButton>
+#include <QGraphicsProxyWidget>
+#include <QPalette>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsTextItem>
+Scene::Scene(QObject *parent,Score *score)
     : QGraphicsScene{parent}
 {
+    sc = score;
+    setenemy(20);
     //new出Eagle
     eagle=new Eagle();
     eagle->setPos(0-eagle->boundingRect().width()/2+2,300-eagle->boundingRect().height());
@@ -107,6 +114,26 @@ Scene::Scene(QObject *parent)
     connect(timer , &QTimer::timeout , this ,&Scene::spawnEnemy );
     timer->start(2000) ;
 
+    QGraphicsTextItem *tex = new QGraphicsTextItem("Life:");
+    QFont fon("Arial",32);
+    tex->setFont(fon);
+    tex->setDefaultTextColor(Qt::white);
+    tex->setZValue(2);
+    tex->setPos(480,-50);
+    addItem(tex);
+    setplayerlife(player);
+    QPushButton *btn = new QPushButton("||");
+    btn->setFixedSize(30,30);
+    btn->setStyleSheet("font-size:20px ; background-color:Dark ; color:black");
+    QGraphicsProxyWidget *button = addWidget(btn);
+    button->setPos(480,-280);
+    button->setZValue(5);
+
+    connect(btn,&QPushButton::clicked,this,&Scene::togglePause);
+    text = new QGraphicsTextItem("pause");
+    QFont font("Arial",64);
+    text->setFont(font);
+    text->setDefaultTextColor(Qt::white);
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -123,6 +150,55 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
         brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
     }
 }
+
+void Scene::setenemy(int x)
+{
+    removeItem(pixmap);
+    int width = -560;
+    int height =-150;
+    int n = 0 ;
+    int m = 0 ;
+    if(x%2==0){
+        m = x/2 ;
+    }else{
+        m = x/2 +1 ;
+    }
+    for(int i = 0 ; i<m ; i++){
+        for(int j=0 ; j<2 ; j++){
+            if(n != x){
+                QPixmap pix(":/images/enemy.png");
+                QPixmap pixm = pix.scaled(30,30);
+                pixmap = new QGraphicsPixmapItem(pixm);
+                pixmap->setZValue(2);
+                if(j==0){
+                    pixmap->setPos(width,height);
+                    addItem(pixmap);
+                }
+                else{
+                    pixmap->setPos(width+30,height);
+                    addItem(pixmap);
+                }
+            }
+            n++;
+        }
+        height = height + 30 ;
+    }
+}
+
+void Scene::setplayerlife(Player *player)
+{
+
+    int m;
+    m = player->getlife();
+    textlife = new QGraphicsTextItem(QString::number(m));
+    QFont font("Arial",32);
+    textlife->setFont(font);
+    textlife->setDefaultTextColor(Qt::white);
+    textlife->setPos(500,0);
+    textlife->setZValue(2);
+    addItem(textlife);
+}
+
 
 void Scene::handleBrickDeleted(Bullet *bullet, Brick *brick){
     removeItem(bullet);
@@ -143,29 +219,49 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     removeItem(enemy);
     delete enemy;
     enemyslain++;
+    setenemy(20-enemyslain);
+    sc->setscore(enemyslain*100);
+    qDebug() << "score:" << sc->getscore();
     qDebug() << "Enemyslain:"<<enemyslain;
     enemyCounter --;
     spawnEnemy();
+    if(enemyslain++ == 20){
+        emit gameover();
+    }
 }
 
 void Scene::loseOneLife(Bullet *bullet, Player *player)
 {
     removeItem(bullet);
+    removeItem(textlife);
     delete bullet;
-    removeItem(player);
-    delete player;
-
-    qDebug("player deleted");
-    // if still have life
-    player = new Player();
+    player->setlife();
+    setplayerlife(player);
     player->setPos(-140,250);
-    addItem(player);
+    if(player->getlife()==0){
+        emit gameover();
+    }
+
 }
 
 void Scene::handleBulletDeleted(Bullet *bullet)
 {
     removeItem(bullet);
     delete bullet;
+}
+
+void Scene::togglePause()
+{
+    isPaused = !isPaused;
+    if (isPaused) {
+        text->setPos(0,0);
+        text->setZValue(5);
+        addItem(text);
+        qDebug("Game paused");
+    } else {
+        removeItem(text);
+        qDebug("Game Resumed");
+    }
 }
 
 void Scene::spawnEnemy()
@@ -184,39 +280,40 @@ void Scene::spawnEnemy()
 
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
 void Scene::keyPressEvent(QKeyEvent *event){
+    if(!isPaused){
+        QPointF pos = player->pos();
+        if(event->key() == Qt::Key_Left && pos.x()>(-600)){
+            player->setRotation(270);
+            player->setPos(pos+QPointF(-5,0));
+        }else if(event->key() == Qt::Key_Right && pos.x()<(570)){
+            player->setRotation(90);
+            player->setPos(pos+QPointF(5,0));
+        }else if(event->key() == Qt::Key_Up && pos.y()>(-300)){
+            player->setRotation(0);
+            player->setPos(pos+QPointF(0,-5));
+        }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
+            player->setRotation(180);
+            player->setPos(pos+QPointF(0,5));
+        }else if (event->key() == Qt::Key_Space) {
+            Bullet *bullet = new Bullet(true);
+            connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
+            connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
+            connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
+            connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
+            bullet->setPos(player->pos());
+            bullet->setRotation(player->rotation());
+            addItem(bullet);
+        }
 
-    QPointF pos = player->pos();
-    if(event->key() == Qt::Key_Left && pos.x()>(-600)){
-        player->setRotation(270);
-        player->setPos(pos+QPointF(-5,0));
-    }else if(event->key() == Qt::Key_Right && pos.x()<(570)){
-        player->setRotation(90);
-        player->setPos(pos+QPointF(5,0));
-    }else if(event->key() == Qt::Key_Up && pos.y()>(-300)){
-        player->setRotation(0);
-        player->setPos(pos+QPointF(0,-5));
-    }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
-        player->setRotation(180);
-        player->setPos(pos+QPointF(0,5));
-    }else if (event->key() == Qt::Key_Space) {
-        Bullet *bullet = new Bullet(true);
-        connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
-        connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
-        connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
-        connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
-        bullet->setPos(player->pos());
-        bullet->setRotation(player->rotation());
-        addItem(bullet);
-    }
-
-    QList<QGraphicsItem *> colliding_items = player->collidingItems();
-    foreach (QGraphicsItem* item,colliding_items) {
-        Brick *brick = dynamic_cast<Brick*>(item);
-        Wall *wall = dynamic_cast<Wall*>(item);
-        Enemy *enemy = dynamic_cast<Enemy*>(item);
-        if(brick || wall || enemy){
-            player->setPos(pos);
-            return;
+        QList<QGraphicsItem *> colliding_items = player->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            Enemy *enemy = dynamic_cast<Enemy*>(item);
+            if(brick || wall || enemy){
+                player->setPos(pos);
+                return;
+            }
         }
     }
 }

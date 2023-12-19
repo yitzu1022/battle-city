@@ -7,5 +7,10 @@
         <file>tank.png</file>
         <file>enemy.png</file>
         <file>bullet.png</file>
+        <file>btcity.png</file>
+        <file>level1.png</file>
+        <file>home.png</file>
+        <file>retry.png</file>
+        <file>return.png</file>
     </qresource>
 </RCC>

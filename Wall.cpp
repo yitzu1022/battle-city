@@ -4,7 +4,9 @@
 Wall::Wall()
 {
     setPixmap(QPixmap(":/images/wall.jpg"));
+
 }
+
 
 Wall::~Wall()
 {

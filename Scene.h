@@ -8,26 +8,30 @@
 #include "Wall.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "Playerlife.h"
+#include "Enemylife.h"
+#include "Score.h"
 
 class Scene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit Scene(QObject *parent = nullptr);
+    explicit Scene(QObject *parent = nullptr,Score *score=nullptr);
     void setBrickwall(int brickFirst_x,int brickFirst_y,int num_x,int num_y);
-
-
+    void setenemy(int x);
+    void setplayerlife(Player *player);
     void spawnEnemy() ;
-
+    PlayerLife *P;
+    EnemyLife *E;
 public slots: //slots function
     void handleBrickDeleted(Bullet *bullet, Brick *brick);
     void GameEndded(Bullet *bullet, Eagle *eagle);
     void enemyDestroy(Bullet *bullet, Enemy *enemy);
     void loseOneLife(Bullet *bullet, Player *player);
     void handleBulletDeleted(Bullet *bullet);
-
+    void togglePause();
 signals:
-
+    void gameover();
 
 private:
     Eagle *eagle;
@@ -39,9 +43,11 @@ private:
     QTimer *timer ;
     int enemyCounter;
     int enemyslain = 0;
-
-
-
+    bool isPaused;
+    QGraphicsTextItem *text;
+    QGraphicsTextItem *textlife;
+    Score *sc;
+    QGraphicsPixmapItem *pixmap;
 protected:
     void keyPressEvent(QKeyEvent *event);
 };

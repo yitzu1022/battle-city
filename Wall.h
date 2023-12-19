@@ -3,10 +3,9 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
-
-class Wall :public QObject,public QGraphicsPixmapItem
+class Wall :public QObject ,public QGraphicsPixmapItem
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     explicit Wall();
     virtual ~Wall();
