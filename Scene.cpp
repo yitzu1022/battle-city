@@ -121,8 +121,6 @@ Scene::Scene(QObject *parent,Score *score)
     tex->setZValue(2);
     tex->setPos(480,-50);
     addItem(tex);
-    //set up player life text
-
     QGraphicsTextItem *texen = new QGraphicsTextItem("Enemy:");
     QFont fonen("Arial",32);
     texen->setFont(fonen);
@@ -130,7 +128,6 @@ Scene::Scene(QObject *parent,Score *score)
     texen->setZValue(2);
     texen->setPos(-600,-50);
     addItem(texen);
-    //set up enemy life text
     setplayerlife(player);
     QPushButton *btn = new QPushButton("||");
     btn->setFixedSize(30,30);
@@ -138,7 +135,6 @@ Scene::Scene(QObject *parent,Score *score)
     QGraphicsProxyWidget *button = addWidget(btn);
     button->setPos(480,-280);
     button->setZValue(5);
-
     connect(btn,&QPushButton::clicked,this,&Scene::togglePause);
     text = new QGraphicsTextItem("pause");
     QFont font("Arial",64);
@@ -206,7 +202,6 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     removeItem(enemy);
     delete enemy;
     enemyslain++;
-    removeItem(textenemylife);
     setenemy(20-enemyslain);
     sc->setscore(enemyslain*100);
     qDebug() << "score:" << sc->getscore();
@@ -246,26 +241,27 @@ void Scene::togglePause()
         text->setZValue(5);
         addItem(text);
         qDebug("Game paused");
-        enemy->setpause();
     } else {
         removeItem(text);
         qDebug("Game Resumed");
-        enemy->setpause();
     }
 }
 
 void Scene::spawnEnemy()
 {
-    if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
-        return;
-    if(enemyCounter >= 4) //同時在場的enemy最多4個
-        return;
-    Enemy *enemy = new Enemy();
-    enemy->setPos(rand()%1170-600 , -250 );
-    addItem(enemy);
-    enemy->setZValue(1);//使enemy always在前景
-    enemyCounter++;
-    qDebug() << "Counter:"<<enemyCounter;
+    if(!isPaused){
+        if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
+            return;
+        if(enemyCounter >= 4) //同時在場的enemy最多4個
+            return;
+        Enemy *enemy = new Enemy();
+        enemy->setPos(rand()%1170-600 , -250 );
+        addItem(enemy);
+        enemy->setZValue(1);//使enemy always在前景
+        enemyCounter++;
+        qDebug() << "Counter:"<<enemyCounter;
+    }
+
 }
 
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)

@@ -37,7 +37,7 @@ Widget::Widget(QWidget *parent)
     buttonX->setPos(540,-280);
     buttonX->setZValue(5);
     connect(btnX,&QPushButton::clicked,[&](){
-        int reply;
+        int reply ;
         reply = QMessageBox::question(this,"Confirmation","Do you really want to quit?",
                                       QMessageBox::Yes | QMessageBox::No);
         if (reply==QMessageBox::Yes){

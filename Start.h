@@ -4,7 +4,6 @@
 #include <QWidget>
 #include "Startscene.h"
 #include "ChooseRound.h"
-
 namespace Ui {
 class Start;
 }

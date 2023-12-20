@@ -48,9 +48,9 @@ void Enemy::rotate_to()
         setRotation(180);
 }
 
-void Enemy::setpause()
+void Enemy::setPause()
 {
-    isPaused = !isPaused;
+     isPaused = !isPaused;
 }
 
 //轉動enemy的方向
@@ -137,6 +137,7 @@ void Enemy::move()
         }
     }
 }
+
 
 void Enemy::shootBullet() {
     Bullet *bullet = new Bullet(false);

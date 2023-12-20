@@ -19,7 +19,6 @@ public:
     void setenemy(int x);
     void setplayerlife(Player *player);
     void spawnEnemy() ;
-
 public slots: //slots function
     void handleBrickDeleted(Bullet *bullet, Brick *brick);
     void GameEndded(Bullet *bullet, Eagle *eagle);
@@ -40,12 +39,11 @@ private:
     QTimer *timer ;
     int enemyCounter;
     int enemyslain = 0;
-    bool isPaused;
+    bool isPaused=false;
     QGraphicsTextItem *text;
     QGraphicsTextItem *textlife;
     QGraphicsTextItem *textenemylife;
     Score *sc;
-
 protected:
     void keyPressEvent(QKeyEvent *event);
 };

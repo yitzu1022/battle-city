@@ -5,6 +5,8 @@
 #include <QFont>
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
+#include "Start.h"
+#include "widget.h"
 Score::Score(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Score),scene(new ScoreScene(this))
@@ -17,12 +19,10 @@ Score::Score(QWidget *parent) :
     ui->graphicsView->setFixedSize(1200,600);
     ui->graphicsView->setAutoFillBackground(true);
     ui->graphicsView->setBackgroundBrush(QBrush(Qt::black));
-
 }
 
 void Score::setup()
 {
-
     int m;
     m = getscore();
     qDebug() << "getscore" << getscore();
@@ -55,7 +55,6 @@ void Score::setup()
     label->setPixmap(newpixmap);
     QGraphicsProxyWidget *bt = scene->addWidget(label);
     bt->setPos(-100,-30);
-
 }
 
 int Score::getscore()

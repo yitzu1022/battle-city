@@ -7,7 +7,7 @@
 #include <QPalette>
 #include <QPushbutton>
 #include <QDebug>
-#include "Start.h"
+
 ChooseRound::ChooseRound(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ChooseRound),scene(new ChooseScene(this))
@@ -40,19 +40,6 @@ ChooseRound::ChooseRound(QWidget *parent) :
     QGraphicsProxyWidget *bt1 = scene->addWidget(btn);
     bt1->setPos(-400,100);
     connect(btn,&QPushButton::clicked,this,&ChooseRound::Close);
-    QPixmap pixmap2(":/images/return.png");
-    QPixmap newpixmap2 = pixmap2.scaled(60,60,Qt::IgnoreAspectRatio);
-    /*QPushButton *btn1 = new QPushButton();
-    btn1->setIcon(newpixmap2);
-    btn1->setIconSize(newpixmap2.size());
-    btn1->setFixedSize(newpixmap2.size());
-    QGraphicsProxyWidget *bt2 = scene->addWidget(btn1);
-    bt2->setPos(-540,-300);
-    connect(btn1,&QPushButton::clicked,[&](){
-        Start *s = new Start();
-        s->show();
-        this->close();
-    });*/
     w = new Widget();
 }
 
