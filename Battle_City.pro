@@ -43,8 +43,6 @@ HEADERS += \
 
 FORMS += \
     ChooseRound.ui \
-    EnemyLife.ui \
-    PlayerLife.ui \
     Score.ui \
     Start.ui \
     widget.ui

@@ -121,6 +121,16 @@ Scene::Scene(QObject *parent,Score *score)
     tex->setZValue(2);
     tex->setPos(480,-50);
     addItem(tex);
+    //set up player life text
+
+    QGraphicsTextItem *texen = new QGraphicsTextItem("Enemy:");
+    QFont fonen("Arial",32);
+    texen->setFont(fonen);
+    texen->setDefaultTextColor(Qt::white);
+    texen->setZValue(2);
+    texen->setPos(-600,-50);
+    addItem(texen);
+    //set up enemy life text
     setplayerlife(player);
     QPushButton *btn = new QPushButton("||");
     btn->setFixedSize(30,30);
@@ -153,36 +163,13 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
 
 void Scene::setenemy(int x)
 {
-    removeItem(pixmap);
-    int width = -560;
-    int height =-150;
-    int n = 0 ;
-    int m = 0 ;
-    if(x%2==0){
-        m = x/2 ;
-    }else{
-        m = x/2 +1 ;
-    }
-    for(int i = 0 ; i<m ; i++){
-        for(int j=0 ; j<2 ; j++){
-            if(n != x){
-                QPixmap pix(":/images/enemy.png");
-                QPixmap pixm = pix.scaled(30,30);
-                pixmap = new QGraphicsPixmapItem(pixm);
-                pixmap->setZValue(2);
-                if(j==0){
-                    pixmap->setPos(width,height);
-                    addItem(pixmap);
-                }
-                else{
-                    pixmap->setPos(width+30,height);
-                    addItem(pixmap);
-                }
-            }
-            n++;
-        }
-        height = height + 30 ;
-    }
+    textenemylife = new QGraphicsTextItem(QString::number(x));
+    QFont font("Arial",32);
+    textenemylife->setFont(font);
+    textenemylife->setDefaultTextColor(Qt::white);
+    textenemylife->setPos(-550,0);
+    textenemylife->setZValue(2);
+    addItem(textenemylife);
 }
 
 void Scene::setplayerlife(Player *player)
@@ -209,7 +196,7 @@ void Scene::handleBrickDeleted(Bullet *bullet, Brick *brick){
 
 void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
 {
-    clear();
+    emit gameover();
 }
 
 void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
@@ -219,6 +206,7 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     removeItem(enemy);
     delete enemy;
     enemyslain++;
+    removeItem(textenemylife);
     setenemy(20-enemyslain);
     sc->setscore(enemyslain*100);
     qDebug() << "score:" << sc->getscore();
@@ -258,9 +246,11 @@ void Scene::togglePause()
         text->setZValue(5);
         addItem(text);
         qDebug("Game paused");
+        enemy->setpause();
     } else {
         removeItem(text);
         qDebug("Game Resumed");
+        enemy->setpause();
     }
 }
 

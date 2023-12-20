@@ -42,9 +42,7 @@ ChooseRound::ChooseRound(QWidget *parent) :
     connect(btn,&QPushButton::clicked,this,&ChooseRound::Close);
     QPixmap pixmap2(":/images/return.png");
     QPixmap newpixmap2 = pixmap2.scaled(60,60,Qt::IgnoreAspectRatio);
-    //scene->addPixmap(newpixmap);
-    //label1->setPixmap(newpixmap1);
-    QPushButton *btn1 = new QPushButton();
+    /*QPushButton *btn1 = new QPushButton();
     btn1->setIcon(newpixmap2);
     btn1->setIconSize(newpixmap2.size());
     btn1->setFixedSize(newpixmap2.size());
@@ -54,7 +52,7 @@ ChooseRound::ChooseRound(QWidget *parent) :
         Start *s = new Start();
         s->show();
         this->close();
-    });
+    });*/
     w = new Widget();
 }
 

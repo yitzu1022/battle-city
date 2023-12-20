@@ -4,8 +4,7 @@
 #include <QWidget>
 #include "Startscene.h"
 #include "ChooseRound.h"
-#include "Playerlife.h"
-#include "Enemylife.h"
+
 namespace Ui {
 class Start;
 }
@@ -19,8 +18,6 @@ public:
     void Close();
     ~Start();
     ChooseRound *c;
-    EnemyLife *e;
-    PlayerLife *p;
 
 
 private:

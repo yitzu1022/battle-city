@@ -8,8 +8,6 @@
 #include "Wall.h"
 #include "Player.h"
 #include "Bullet.h"
-#include "Playerlife.h"
-#include "Enemylife.h"
 #include "Score.h"
 
 class Scene : public QGraphicsScene
@@ -21,8 +19,7 @@ public:
     void setenemy(int x);
     void setplayerlife(Player *player);
     void spawnEnemy() ;
-    PlayerLife *P;
-    EnemyLife *E;
+
 public slots: //slots function
     void handleBrickDeleted(Bullet *bullet, Brick *brick);
     void GameEndded(Bullet *bullet, Eagle *eagle);
@@ -46,8 +43,9 @@ private:
     bool isPaused;
     QGraphicsTextItem *text;
     QGraphicsTextItem *textlife;
+    QGraphicsTextItem *textenemylife;
     Score *sc;
-    QGraphicsPixmapItem *pixmap;
+
 protected:
     void keyPressEvent(QKeyEvent *event);
 };

@@ -37,20 +37,23 @@ Widget::Widget(QWidget *parent)
     buttonX->setPos(540,-280);
     buttonX->setZValue(5);
     connect(btnX,&QPushButton::clicked,[&](){
-        QMessageBox::StandardButton reply = QMessageBox::No;
+        int reply;
         reply = QMessageBox::question(this,"Confirmation","Do you really want to quit?",
                                       QMessageBox::Yes | QMessageBox::No);
         if (reply==QMessageBox::Yes){
             this->close();
-
         }else{
 
         }
     });
-    connect(scene,&Scene::gameover,[&](){
-        score->show();
-        this->close();
-    });
+    connect(scene,&Scene::gameover,this,&Widget::Close);
+}
+
+void Widget::Close()
+{
+    score->setup();
+    score->show();
+    this->close();
 }
 
 

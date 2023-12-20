@@ -17,6 +17,7 @@ public:
     void setRotation(qreal newRotation);
     qreal rotation() const;
     void rotate_to();
+    void setpause();
 
 public slots: //slots function
     void move();
@@ -30,6 +31,7 @@ private:
     QTimer *rotation_timer;
     int counter ;
     qreal m_rotation;
+    bool isPaused=false;
 
 
 };

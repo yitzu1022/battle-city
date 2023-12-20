@@ -48,6 +48,11 @@ void Enemy::rotate_to()
         setRotation(180);
 }
 
+void Enemy::setpause()
+{
+    isPaused = !isPaused;
+}
+
 //轉動enemy的方向
 void Enemy::setRotation(qreal newRotation)
 {
@@ -63,76 +68,74 @@ void Enemy::setRotation(qreal newRotation)
 
 void Enemy::move()
 {
+    if(!isPaused){
+        if( rotation() == 270  && x()>(-600)) //enemy 向左
+        {
 
-    if( rotation() == 270  && x()>(-600)) //enemy 向左
-    {
+            setPos( x()-10 ,y());
+            QList<QGraphicsItem *> colliding_items = collidingItems();
+            foreach (QGraphicsItem* item,colliding_items) {
+                Brick *brick = dynamic_cast<Brick*>(item);
+                Wall *wall = dynamic_cast<Wall*>(item);
+                Enemy *otherenemy =dynamic_cast<Enemy*>(item);
+                Player *player = dynamic_cast<Player*>(item);
+                if(brick || wall || otherenemy||player){
+                    setPos(x()+10 ,y());
+                    rotate_to();
+                    return;
+                }
+            }
+        }else if (rotation() == 0 && y()>(-300) )//enemy 向上
+        {
 
-        setPos( x()-10 ,y());
-        QList<QGraphicsItem *> colliding_items = collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            Enemy *otherenemy =dynamic_cast<Enemy*>(item);
-            Player *player = dynamic_cast<Player*>(item);
-            if(brick || wall || otherenemy||player){
-                setPos(x()+10 ,y());
-                rotate_to();
-                return;
+            setPos(x() ,y()-10);
+            QList<QGraphicsItem *> colliding_items = collidingItems();
+            foreach (QGraphicsItem* item,colliding_items) {
+                Brick *brick = dynamic_cast<Brick*>(item);
+                Wall *wall = dynamic_cast<Wall*>(item);
+                Enemy *otherenemy =dynamic_cast<Enemy*>(item);
+                Player *player = dynamic_cast<Player*>(item);
+                if(brick || wall || otherenemy||player){
+                    setPos(x() ,y()+10);
+                    rotate_to();
+                    return;
+                }
+            }
+        }else if(rotation() == 90 && x()<(570))//向右
+        {
+
+            setPos( x()+10 ,y());
+            QList<QGraphicsItem *> colliding_items = collidingItems();
+            foreach (QGraphicsItem* item,colliding_items) {
+                Brick *brick = dynamic_cast<Brick*>(item);
+                Wall *wall = dynamic_cast<Wall*>(item);
+                Enemy *otherenemy =dynamic_cast<Enemy*>(item);
+                Player *player = dynamic_cast<Player*>(item);
+                if(brick || wall || otherenemy||player){
+                    setPos(x()-10 ,y());
+                    rotate_to();
+                    return;
+                }
             }
         }
-    }else if (rotation() == 0 && y()>(-300) )//enemy 向上
-    {
+        else if(rotation() == 180 && y()<(270))//向下
+        {
 
-        setPos(x() ,y()-10);
-        QList<QGraphicsItem *> colliding_items = collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            Enemy *otherenemy =dynamic_cast<Enemy*>(item);
-            Player *player = dynamic_cast<Player*>(item);
-            if(brick || wall || otherenemy||player){
-                setPos(x() ,y()+10);
-                rotate_to();
-                return;
-            }
-        }
-    }else if(rotation() == 90 && x()<(570))//向右
-    {
-
-        setPos( x()+10 ,y());
-        QList<QGraphicsItem *> colliding_items = collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            Enemy *otherenemy =dynamic_cast<Enemy*>(item);
-            Player *player = dynamic_cast<Player*>(item);
-            if(brick || wall || otherenemy||player){
-                setPos(x()-10 ,y());
-                rotate_to();
-                return;
+            setPos(x() ,y()+10);
+            QList<QGraphicsItem *> colliding_items = collidingItems();
+            foreach (QGraphicsItem* item,colliding_items) {
+                Brick *brick = dynamic_cast<Brick*>(item);
+                Wall *wall = dynamic_cast<Wall*>(item);
+                Enemy *otherenemy =dynamic_cast<Enemy*>(item);
+                Player *player = dynamic_cast<Player*>(item);
+                if(brick || wall || otherenemy||player){
+                    setPos(x() ,y()-10);
+                    rotate_to();
+                    return;
+                }
             }
         }
     }
-    else if(rotation() == 180 && y()<(270))//向下
-    {
-
-        setPos(x() ,y()+10);
-        QList<QGraphicsItem *> colliding_items = collidingItems();
-        foreach (QGraphicsItem* item,colliding_items) {
-            Brick *brick = dynamic_cast<Brick*>(item);
-            Wall *wall = dynamic_cast<Wall*>(item);
-            Enemy *otherenemy =dynamic_cast<Enemy*>(item);
-            Player *player = dynamic_cast<Player*>(item);
-            if(brick || wall || otherenemy||player){
-                setPos(x() ,y()-10);
-                rotate_to();
-                return;
-            }
-        }
-    }
-
-
-
 }
 
 void Enemy::shootBullet() {
