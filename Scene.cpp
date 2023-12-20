@@ -202,6 +202,7 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     removeItem(enemy);
     delete enemy;
     enemyslain++;
+    removeItem(textenemylife);
     setenemy(20-enemyslain);
     sc->setscore(enemyslain*100);
     qDebug() << "score:" << sc->getscore();
