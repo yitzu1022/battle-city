@@ -204,230 +204,135 @@ void SecondScene::setIce(int IceFirst_x, int IceFirst_y, int num_x, int num_y)
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
 void SecondScene::player_move()
 {
-    //int direction;
+    QPointF pos_1 = player_1->pos();
+    QPointF pos_2 = player_2->pos();
+    foreach (int key, keys) {
+        switch (key) {
+        case Qt::Key_Left:{
+            if(pos_1.x()>(-450)){
+                player_1->setRotation(270);
+                player_1->setPos(pos_1+QPointF(-5,0));
 
-    if(number_of_player==1){   //one-player的模式
-        QPointF pos_1 = player_1->pos();
-        foreach (int key, keys) {
-
-            switch (key) {
-            case Qt::Key_Left:{
-                if(pos_1.x()>(-450)){
-                    //direction=1; //left
-                    player_1->setRotation(270);
-                    player_1->setPos(pos_1+QPointF(-5,0));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(-20,0));
-                        }
+                QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_1->setPos(pos_1+QPointF(-20,0));
                     }
                 }
-                break;}
-            case Qt::Key_Right:{
-                if(pos_1.x()<(420)){
-                    //direction=2; //right
-                    player_1->setRotation(90);
-                    player_1->setPos(pos_1+QPointF(5,0));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(20,0));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Up:{
-                if(pos_1.y()>(-300)){
-                    //irection=3; //up
-                    player_1->setRotation(0);
-                    player_1->setPos(pos_1+QPointF(0,-5));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(0,-20));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Down:{
-                if(pos_1.y()<(270)){
-                    //direction=4; //down
-                    player_1->setRotation(180);
-                    player_1->setPos(pos_1+QPointF(0,5));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(0,20));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Space:{
-                Bullet *bullet = new Bullet(true);
-                //connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);   //等code都貼過來 就可以把註解刪掉
-                //connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);           //目前只是測試
-                //connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
-                //connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
-                bullet->setPos(player_1->pos());
-                bullet->setRotation(player_1->rotation());
-                addItem(bullet);
-                break;
             }
-            default:
-                break;
-            }
-            QList<QGraphicsItem *> colliding_items_1 = player_1->collidingItems();
-            foreach (QGraphicsItem* item,colliding_items_1) {
-                Brick *brick = dynamic_cast<Brick*>(item);
-                Wall *wall = dynamic_cast<Wall*>(item);
-                Enemy *enemy = dynamic_cast<Enemy*>(item);
-                River *river = dynamic_cast<River*>(item);
-                if(brick || wall || enemy || river){
-                    player_1->setPos(pos_1);
-                    return;
-                }
+            break;}
+        case Qt::Key_Right:{
+            if(pos_1.x()<(420)){
+                player_1->setRotation(90);
+                player_1->setPos(pos_1+QPointF(5,0));
 
+                QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_1->setPos(pos_1+QPointF(20,0));
+                    }
+                }
             }
+            break;}
+        case Qt::Key_Up:{
+            if(pos_1.y()>(-300)){
+                player_1->setRotation(0);
+                player_1->setPos(pos_1+QPointF(0,-5));
+
+                QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_1->setPos(pos_1+QPointF(0,-20));
+                    }
+                }
+            }
+            break;}
+        case Qt::Key_Down:{
+            if(pos_1.y()<(270)){
+                player_1->setRotation(180);
+                player_1->setPos(pos_1+QPointF(0,5));
+
+                QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_1->setPos(pos_1+QPointF(0,20));
+                    }
+                }
+            }
+            break;}
+        case Qt::Key_A:{
+            if(number_of_player==2 && pos_2.x()>(-450)){  //有兩個player時才會進入此條件
+                player_2->setRotation(270);
+                player_2->setPos(pos_2+QPointF(-5,0));
+
+                QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_2->setPos(pos_2+QPointF(-20,0));
+                    }
+                }
+            }
+            break;}
+        case Qt::Key_D:{
+            if(number_of_player==2 && pos_2.x()<(420)){                 //有兩個player時才會進入此條件
+                player_2->setRotation(90);
+                player_2->setPos(pos_2+QPointF(5,0));
+
+                QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_2->setPos(pos_2+QPointF(20,0));
+                    }
+                }
+            }
+            break;}
+        case Qt::Key_W:{                                          //有兩個player時才會進入此條件
+            if(number_of_player==2 && pos_2.y()>(-300)){
+                player_2->setRotation(0);
+                player_2->setPos(pos_2+QPointF(0,-5));
+
+                QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_2->setPos(pos_2+QPointF(0,-20));
+                    }
+                }
+            }
+            break;}
+        case Qt::Key_S:{
+            if(number_of_player==2 && pos_2.y()<(270)){                //有兩個player時才會進入此條件
+                player_2->setRotation(180);
+                player_2->setPos(pos_2+QPointF(0,5));
+
+                QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
+                foreach (QGraphicsItem* item,colliding_items_ice) {
+                    Ice *ice = dynamic_cast<Ice*>(item);
+                    if(ice){
+                        player_2->setPos(pos_2+QPointF(0,20));
+                    }
+                }
+            }
+            break;}
+        case Qt::Key_Space:{
+            Bullet *bullet = new Bullet(true);
+            //connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
+            //connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
+            //connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
+            //connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
+            bullet->setPos(player_1->pos());
+            bullet->setRotation(player_1->rotation());
+            addItem(bullet);
+            break;
         }
-    }
-    if(number_of_player==2){   //two-player的模式
-        QPointF pos_1 = player_1->pos();
-        QPointF pos_2 = player_2->pos();
-        foreach (int key, keys) {
-            switch (key) {
-            case Qt::Key_Left:{
-                if(pos_1.x()>(-450)){
-                    player_1->setRotation(270);
-                    player_1->setPos(pos_1+QPointF(-5,0));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(-20,0));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Right:{
-                if(pos_1.x()<(420)){
-                    player_1->setRotation(90);
-                    player_1->setPos(pos_1+QPointF(5,0));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(20,0));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Up:{
-                if(pos_1.y()>(-300)){
-                    player_1->setRotation(0);
-                    player_1->setPos(pos_1+QPointF(0,-5));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(0,-20));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Down:{
-                if(pos_1.y()<(270)){
-                    player_1->setRotation(180);
-                    player_1->setPos(pos_1+QPointF(0,5));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_1->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_1->setPos(pos_1+QPointF(0,20));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_A:{
-                if(pos_2.x()>(-450)){
-                    player_2->setRotation(270);
-                    player_2->setPos(pos_2+QPointF(-5,0));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_2->setPos(pos_2+QPointF(-20,0));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_D:{
-                if(pos_2.x()<(420)){
-                    player_2->setRotation(90);
-                    player_2->setPos(pos_2+QPointF(5,0));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_2->setPos(pos_2+QPointF(20,0));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_W:{
-                if(pos_2.y()>(-300)){
-                    player_2->setRotation(0);
-                    player_2->setPos(pos_2+QPointF(0,-5));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_2->setPos(pos_2+QPointF(0,-20));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_S:{
-                if(pos_2.y()<(270)){
-                    player_2->setRotation(180);
-                    player_2->setPos(pos_2+QPointF(0,5));
-
-                    QList<QGraphicsItem *> colliding_items_ice = player_2->collidingItems();
-                    foreach (QGraphicsItem* item,colliding_items_ice) {
-                        Ice *ice = dynamic_cast<Ice*>(item);
-                        if(ice){
-                            player_2->setPos(pos_2+QPointF(0,20));
-                        }
-                    }
-                }
-                break;}
-            case Qt::Key_Space:{
-                Bullet *bullet = new Bullet(true);
-                //connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
-                //connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
-                //connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
-                //connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
-                bullet->setPos(player_1->pos());
-                bullet->setRotation(player_1->rotation());
-                addItem(bullet);
-                break;
-            }
-            case Qt::Key_Shift:{
+        case Qt::Key_Shift:{
+            if(number_of_player==2){                                 //有兩個player時才會進入此條件
                 Bullet *bullet = new Bullet(true);
                 //connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
                 //connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
@@ -436,26 +341,28 @@ void SecondScene::player_move()
                 bullet->setPos(player_2->pos());
                 bullet->setRotation(player_2->rotation());
                 addItem(bullet);
-                break;
-            }
-            default:
-                break;
-            }
-            QList<QGraphicsItem *> colliding_items_1 = player_1->collidingItems();
-            foreach (QGraphicsItem* item,colliding_items_1) {
-                Brick *brick = dynamic_cast<Brick*>(item);
-                Wall *wall = dynamic_cast<Wall*>(item);
-                Enemy *enemy = dynamic_cast<Enemy*>(item);
-                River *river = dynamic_cast<River*>(item);
-                if(brick || wall || enemy||river){
-                    player_1->setPos(pos_1);
-                    return;
-                }
-                if(ice){
-
-                }
             }
 
+            break;
+        }
+        default:
+            break;
+        }
+        QList<QGraphicsItem *> colliding_items_1 = player_1->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items_1) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            Enemy *enemy = dynamic_cast<Enemy*>(item);
+            River *river = dynamic_cast<River*>(item);
+            if(brick || wall || enemy||river){
+                player_1->setPos(pos_1);
+                return;
+            }
+            if(ice){
+
+            }
+        }
+        if(number_of_player==2){                                       //有兩個player時才會進入此條件
             QList<QGraphicsItem *> colliding_items_2 = player_2->collidingItems();
             foreach (QGraphicsItem* item,colliding_items_2) {
                 Brick *brick = dynamic_cast<Brick*>(item);
@@ -468,7 +375,7 @@ void SecondScene::player_move()
                 }
             }
         }
-    }
+  }
 }
 
 void SecondScene::keyPressEvent(QKeyEvent *event){  //當按鍵按下
