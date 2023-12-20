@@ -16,6 +16,8 @@ public:
     explicit Enemy(QObject *parent = nullptr);
     void setRotation(qreal newRotation);
     qreal rotation() const;
+    void rotate_to();
+    void setPause();
 
 public slots: //slots function
     void move();
@@ -26,8 +28,10 @@ signals :
 private:
     QTimer *timer ;
     QTimer *shootTimer;
+    QTimer *rotation_timer;
     int counter ;
     qreal m_rotation;
+    bool isPaused=false;
 
 
 };

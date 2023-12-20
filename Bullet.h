@@ -27,6 +27,8 @@ signals:
     void bulletHitsEagle(Bullet *bullet, Eagle *eagle);
     void bulletHitsEnemy(Bullet *bullet, Enemy *Enemy);
     void bulletHitsPlayer(Bullet *bullet, Player *player);
+    void bulletDeleted(Bullet *bullet);
+    void bullet_bullet(Bullet *bullet1, Bullet *bullet2);
 
 private:
     QTimer *timer;

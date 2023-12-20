@@ -26,4 +26,14 @@ void Player::setRotation(qreal newRotation)
     setTransform(t); //apply 此 transformation
 }
 
+void Player::setlife()
+{
+    life--;
+}
+
+int Player::getlife()
+{
+    return life;
+}
+
 
