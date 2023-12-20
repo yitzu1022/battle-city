@@ -16,6 +16,7 @@ class Scene : public QGraphicsScene
 public:
     explicit Scene(QObject *parent = nullptr);
     void setBrickwall(int brickFirst_x,int brickFirst_y,int num_x,int num_y);
+    void setEagleBrickWall();
 
 
     void spawnEnemy() ;
@@ -31,13 +32,16 @@ public slots: //slots function
     void addOneLife();
     void grenadeBoom();
     void helmetProtect(Player *player);
+    void shovelChange();
+    void playergetStar();
+    void enemyStop();
 
 signals:
     //grenade, helmet, shovel, star, tank, timer
     void player_grenade();
     void player_helmet(Player *player);
     void player_shovel();
-    void player_star(Player *player, Skill *skill);
+    void player_star();
     void player_tank();
     void player_timer();
 
@@ -45,10 +49,12 @@ private:
     Eagle *eagle;
     Brick *brick;
     Brick *brickFirst;
+    QList<Brick*> eagleBrick;
     Wall *wall;
     Player *player;
     Enemy *enemy;
     QList<Enemy*> enemies;
+    bool timerSkill = false;
     QTimer *timer ;
     Skill *skill;
     int enemyCounter;

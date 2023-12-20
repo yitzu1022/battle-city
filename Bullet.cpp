@@ -32,8 +32,12 @@ void Bullet::move() {
         Player *player = dynamic_cast<Player*>(item);
         Eagle *eagle = dynamic_cast<Eagle*>(item);
         Bullet *bullet = dynamic_cast<Bullet*>(item);
-        if (brick) {
+        if (brick && brick->isProtect() == false) {
             emit bulletHitsBrick(this, brick);
+            return;
+        }
+        else if (brick && brick->isProtect() == true){
+            emit bullet_bullet(this, bullet);
             return;
         }
         else if (eagle) {
@@ -62,14 +66,10 @@ void Bullet::move() {
         }
     }
 
-    // Move the bullet up
-    // Should be change by direction
-    // if direction .....
-    //setPos(x(), y()-10);
     int dx;
-    dx=10*qCos(qDegreesToRadians(rotation()-90));
+    dx=speed*qCos(qDegreesToRadians(rotation()-90));
     int dy;
-    dy=10*qSin(qDegreesToRadians(rotation()-90));
+    dy=speed*qSin(qDegreesToRadians(rotation()-90));
     setPos(x()+dx,y()+dy);
 
 
@@ -78,6 +78,13 @@ void Bullet::move() {
 qreal Bullet::rotation() const
 {
     return m_rotation;
+}
+
+void Bullet::setFast()
+{
+    if (isMyBullet = true){
+        speed = 20;
+    }
 }
 
 void Bullet::setRotation(qreal newRotation)

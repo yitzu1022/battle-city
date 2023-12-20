@@ -20,7 +20,7 @@ signals:
 
 private:
     qreal m_rotation;
-    bool protect;
+    bool protect = false;
 };
 
 #endif // PLAYER_H

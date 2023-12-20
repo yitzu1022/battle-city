@@ -90,9 +90,7 @@ Scene::Scene(QObject *parent)
     setBrickwall(-398,-30,2,1);
     setBrickwall(-338+brick->boundingRect().width()*16.5+60,-30,2,1);
     //用來建立eagle的堡壘
-    setBrickwall(0-brick->boundingRect().width()*2-10,217,1,4);
-    setBrickwall(0-brick->boundingRect().width()*2-10,197,6,1);
-    setBrickwall(51,217,1,4);
+    setEagleBrickWall();
 
     //new出player
     player = new Player();
@@ -108,14 +106,17 @@ Scene::Scene(QObject *parent)
     connect(timer , &QTimer::timeout , this ,&Scene::spawnEnemy );
     timer->start(2000) ;
 
-    //try
-    skill = new Skill();
-    skill->setPos(-120, 250);
-    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
-    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
-    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
-    addItem(skill);
-    skill->setZValue(1);
+//    //test skill
+//    skill = new Skill();
+//    skill->setPos(-120, 250);
+//    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
+//    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
+//    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
+//    connect(this, &Scene::player_shovel, this, &Scene::shovelChange);
+//    connect(this, &Scene::player_star, this, &Scene::playergetStar);
+//    connect(this, &Scene::player_timer, this, &Scene::enemyStop);
+//    addItem(skill);
+//    skill->setZValue(1);
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -130,6 +131,32 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
             brick->setZValue(1);
         }
         brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
+    }
+}
+
+void Scene::setEagleBrickWall()
+{
+    QList<double> x = {0-brick->boundingRect().width()*2-10, 0-brick->boundingRect().width()*2-10, 51};
+    QList<double> y = {217, 197, 217};
+    QList<int> w = {1, 6, 1};
+    QList<int> h = {4, 1, 4};
+    for (int j = 0; j < 3; j++){
+        double brickFirst_x = x[j];
+        double brickFirst_y = y[j];
+        int num_x = w[j];
+        int num_y = h[j];
+        for(int i=0;i<num_x;i++){
+            int d=0;
+            for(int j=0;j <num_y;j++){
+                brick=new Brick();
+                eagleBrick.append(brick);
+                brick->setPos(brickFirst_x,brickFirst_y+d);
+                d = d+brick->boundingRect().height()-17;
+                addItem(brick);
+                brick->setZValue(1);
+            }
+            brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
+        }
     }
 }
 
@@ -153,6 +180,9 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     connect(this, &Scene::player_tank, this, &Scene::addOneLife);
     connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
     connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
+    connect(this, &Scene::player_shovel, this, &Scene::shovelChange);
+    connect(this, &Scene::player_star, this, &Scene::playergetStar);
+    connect(this, &Scene::player_timer, this, &Scene::enemyStop);
     addItem(skill);
     skill->setZValue(1);
     //}
@@ -197,7 +227,7 @@ void Scene::grenadeBoom()
     qDebug() << "Enemies:";
 
     // 想要放爆炸的動畫ＱＱ
-    for(int i = enemyCounter; i > 0; i--){
+    for(int i = enemies.length(); i > enemies.length()-enemyCounter; i--){
         Enemy *enemy = enemies[i-1];
         removeItem(enemy);
         delete enemy;
@@ -211,9 +241,36 @@ void Scene::helmetProtect(Player *player)
     player->Protect();
 }
 
+void Scene::shovelChange()
+{
+    for(Brick* brick : eagleBrick){
+        brick -> setWall();
+    }
+}
+
+void Scene::playergetStar()
+{
+    //    bullet->setFast();
+}
+
+void Scene::enemyStop()
+{
+    timerSkill = true;
+    for(int i = enemies.length(); i > enemies.length()-enemyCounter; i--){
+        Enemy *enemy = enemies[i-1];
+        enemy -> stop10sec();
+        qDebug() << i;
+    }
+    QTimer::singleShot(10000, [=]() {
+        timerSkill = false;
+    });
+}
+
 
 void Scene::spawnEnemy()
 {
+    if(timerSkill == true)
+        return;
     if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
         return;
     if(enemyCounter >= 4) //同時在場的enemy最多4個
@@ -271,7 +328,7 @@ void Scene::keyPressEvent(QKeyEvent *event){
             }else if(skill->getSkillType() == "shovel"){
                 emit player_shovel();
             }else if(skill->getSkillType() == "star"){
-                emit player_star(player, skill);
+                emit player_star();
             }else if(skill->getSkillType() == "tank"){
                 emit player_tank();
             }else if(skill->getSkillType() == "timer"){
