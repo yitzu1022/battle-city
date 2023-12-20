@@ -3,7 +3,9 @@
 
 #include "Scene.h"
 #include <QWidget>
-
+#include <QPainter>
+#include <QPaintEvent>
+#include "Score.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -14,10 +16,12 @@ class Widget : public QWidget
 
 public:
     Widget(QWidget *parent = nullptr);
+    void Close();
     ~Widget();
 
 private:
     Ui::Widget *ui;
     Scene *scene;
+    Score *score;
 };
 #endif // WIDGET_H
