@@ -26,10 +26,20 @@ public slots: //slots function
     void enemyDestroy(Bullet *bullet, Enemy *enemy);
     void loseOneLife(Bullet *bullet, Player *player);
     void handleBulletDeleted(Bullet *bullet);
-    void addOneLife(Player *player, Skill *skill);
+
+    //skill
+    void addOneLife();
+    void grenadeBoom();
+    void helmetProtect(Player *player);
 
 signals:
-    void addLife(Player *player, Skill *skill);
+    //grenade, helmet, shovel, star, tank, timer
+    void player_grenade();
+    void player_helmet(Player *player);
+    void player_shovel();
+    void player_star(Player *player, Skill *skill);
+    void player_tank();
+    void player_timer();
 
 private:
     Eagle *eagle;
@@ -38,7 +48,9 @@ private:
     Wall *wall;
     Player *player;
     Enemy *enemy;
+    QList<Enemy*> enemies;
     QTimer *timer ;
+    Skill *skill;
     int enemyCounter;
     int enemyslain = 0;
 

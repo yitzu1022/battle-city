@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QList>
 #include <stdlib.h>
+#include <QMetaType>
 
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}
@@ -106,6 +107,15 @@ Scene::Scene(QObject *parent)
     timer = new QTimer() ;
     connect(timer , &QTimer::timeout , this ,&Scene::spawnEnemy );
     timer->start(2000) ;
+
+    //try
+    skill = new Skill();
+    skill->setPos(-120, 250);
+    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
+    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
+    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
+    addItem(skill);
+    skill->setZValue(1);
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -137,12 +147,15 @@ void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
 
 void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
 {
+    //if (enemy->isSpecial() == 1){ //如果是特殊敵人
     Skill *skill = new Skill();
     skill->setPos(enemy->pos());
-    connect(this, &Scene::addLife, this, &Scene::addOneLife);
+    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
+    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
+    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
     addItem(skill);
     skill->setZValue(1);
-
+    //}
     removeItem(bullet);
     delete bullet;
     removeItem(enemy);
@@ -173,11 +186,31 @@ void Scene::handleBulletDeleted(Bullet *bullet)
     delete bullet;
 }
 
-void Scene::addOneLife(Player *player, Skill *skill)
+void Scene::addOneLife()
 {
     // add one life
     qDebug("add one life");
 }
+
+void Scene::grenadeBoom()
+{
+    qDebug() << "Enemies:";
+
+    // 想要放爆炸的動畫ＱＱ
+    for(int i = enemyCounter; i > 0; i--){
+        Enemy *enemy = enemies[i-1];
+        removeItem(enemy);
+        delete enemy;
+        qDebug() << i;
+    }
+    update();
+}
+
+void Scene::helmetProtect(Player *player)
+{
+    player->Protect();
+}
+
 
 void Scene::spawnEnemy()
 {
@@ -186,6 +219,7 @@ void Scene::spawnEnemy()
     if(enemyCounter >= 4) //同時在場的enemy最多4個
         return;
     Enemy *enemy = new Enemy();
+    enemies.append(enemy);
     enemy->setPos(rand()%1170-600 , -250 );
     addItem(enemy);
     enemy->setZValue(1);//使enemy always在前景
@@ -229,11 +263,21 @@ void Scene::keyPressEvent(QKeyEvent *event){
         if(brick || wall || enemy){
             player->setPos(pos);
             return;
-        }else if (skill){
-            if(skill->getSkillType() == "add_life"){
-                emit addLife(player, skill);
+        }else if (skill){ //grenade, helmet, shovel, star, tank, timer
+            if (skill->getSkillType() == "grenade"){
+                emit player_grenade();
+            }else if(skill->getSkillType() == "helmet"){
+                emit player_helmet(player);
+            }else if(skill->getSkillType() == "shovel"){
+                emit player_shovel();
+            }else if(skill->getSkillType() == "star"){
+                emit player_star(player, skill);
+            }else if(skill->getSkillType() == "tank"){
+                emit player_tank();
+            }else if(skill->getSkillType() == "timer"){
+                emit player_timer();
             }else{
-                qDebug("error");
+                qDebug("skillType error");
             }
             removeItem(skill);
             delete skill;

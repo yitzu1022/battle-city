@@ -15,6 +15,7 @@ SOURCES += \
     Enemy.cpp \
     Player.cpp \
     Scene.cpp \
+    Skill.cpp \
     Wall.cpp \
     main.cpp \
     widget.cpp
@@ -26,6 +27,7 @@ HEADERS += \
     Enemy.h \
     Player.h \
     Scene.h \
+    Skill.h \
     Wall.h \
     widget.h
 

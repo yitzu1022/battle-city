@@ -4,9 +4,13 @@
         <file>brick.png</file>
         <file>wall.jpg</file>
         <file>Eagle.png</file>
-        <file>tank.png</file>
         <file>enemy.png</file>
         <file>bullet.png</file>
-        <file>heartbeat.png</file>
+        <file>grenade.png</file>
+        <file>helmet.png</file>
+        <file>shovel.png</file>
+        <file>timer.png</file>
+        <file>star.png</file>
+        <file>player.png</file>
     </qresource>
 </RCC>
