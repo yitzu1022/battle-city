@@ -40,7 +40,20 @@ ChooseRound::ChooseRound(QWidget *parent) :
     QGraphicsProxyWidget *bt1 = scene->addWidget(btn);
     bt1->setPos(-400,100);
     connect(btn,&QPushButton::clicked,this,&ChooseRound::Close);
+    QPixmap pixmap2(":/images/level1.png");
+    QPixmap newpixmap2= pixmap2.scaled(100,100,Qt::IgnoreAspectRatio);
+    //scene->addPixmap(newpixmap);
+    //label1->setPixmap(newpixmap1);
+    QPushButton *btn1 = new QPushButton();
+    btn1->setIcon(newpixmap2);
+    btn1->setIconSize(newpixmap2.size());
+    btn1->setFixedSize(newpixmap2.size());
+    QGraphicsProxyWidget *bt2 = scene->addWidget(btn1);
+    bt2->setPos(-300,100);
+    connect(btn1,&QPushButton::clicked,this,&ChooseRound::OpenSecond);
     w = new Widget();
+    s = new SecondWidget();
+
 }
 
 
@@ -49,6 +62,12 @@ void ChooseRound::Close()
 {
     this->close();
     w->show();
+}
+
+void ChooseRound::OpenSecond()
+{
+    this->close();
+    s->show();
 }
 
 

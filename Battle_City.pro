@@ -19,6 +19,8 @@ SOURCES += \
     Scene.cpp \
     Score.cpp \
     ScoreScene.cpp \
+    SecondScene.cpp \
+    Secondwidget.cpp \
     Start.cpp \
     Startscene.cpp \
     Wall.cpp \
@@ -36,6 +38,8 @@ HEADERS += \
     Scene.h \
     Score.h \
     ScoreScene.h \
+    SecondScene.h \
+    Secondwidget.h \
     Start.h \
     Startscene.h \
     Wall.h \
@@ -44,6 +48,7 @@ HEADERS += \
 FORMS += \
     ChooseRound.ui \
     Score.ui \
+    Secondwidget.ui \
     Start.ui \
     widget.ui
 
