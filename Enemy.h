@@ -13,7 +13,7 @@ class Enemy : public QObject,public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    explicit Enemy(QObject *parent = nullptr);
+    explicit Enemy(QObject *parent = nullptr , int kind = 0 );
     void setRotation(qreal newRotation);
     qreal rotation() const;
     void rotate_to();
@@ -32,7 +32,8 @@ private:
     int counter ;
     qreal m_rotation;
     bool isPaused=false;
-
+    int kindof;
+    friend class Scene ;
 
 };
 #endif // ENEMY_H

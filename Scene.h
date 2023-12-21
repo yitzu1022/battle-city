@@ -42,6 +42,8 @@ private:
     QTimer *timer ;
     int enemyCounter;
     int enemyslain = 0;
+    int enemyTotal=0;
+    int armorlife=4;
     bool isPaused=false;
     QGraphicsTextItem *text;
     QGraphicsTextItem *textlife;

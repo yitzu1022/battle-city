@@ -15,5 +15,9 @@
         <file>grass.jpg</file>
         <file>Ice.png</file>
         <file>river.jpg</file>
+        <file>Armor_tank.png</file>
+        <file>Fast_tank.png</file>
+        <file>Power_tank.png</file>
+        <file>Special_enemy.png</file>
     </qresource>
 </RCC>
