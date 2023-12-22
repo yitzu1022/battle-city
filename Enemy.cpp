@@ -236,6 +236,8 @@ void Enemy::move()
 
 void Enemy::shootBullet() {
     Bullet *bullet = new Bullet(false);
+    if (kindof == 3)
+        bullet ->timer->start(25) ;
     Scene *scene = dynamic_cast<Scene*>(this->scene());
     connect(bullet, &Bullet::bulletHitsBrick, scene, &Scene::handleBrickDeleted);
     connect(bullet, &Bullet::bulletHitsEagle, scene, &Scene::GameEndded);

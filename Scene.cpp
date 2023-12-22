@@ -104,17 +104,20 @@ Scene::Scene(QObject *parent,Score *score)
     number_of_player=2; //1代表1player 2代表2player
     if(number_of_player==1){   //one-player 模式
         player_1 = new Player();
+        player_1->setnumber(1);
         player_2 = new Player();
-        player_1->setPos(-140,250);
+        player_1->setPos(140,250);
         addItem(player_1);
         player_1->setZValue(1);//使player always在前景
     }else{    //teo-player 模式
         player_1 = new Player();
+        player_1->setnumber(1);
         player_1->setPos(140,250);
         addItem(player_1);
         player_1->setZValue(1);//使player always在前景
 
         player_2 = new Player();
+        player_2->setnumber(2);
         player_2->setPos(-140,250);
         addItem(player_2);
         player_2->setZValue(1);//使player always在前景
@@ -246,7 +249,14 @@ void Scene::loseOneLife(Bullet *bullet, Player *player)
     delete bullet;
     player->setlife();
     setplayerlife(player);
-    player->setPos(-140,250);
+    if(player->getnumber()==1){
+        player->setPos(140,250);
+        player->setRotation(0);
+    }
+    else{
+        player->setPos(-140,250);
+        player->setRotation(0);
+    }
     if(player->getlife()==0){
         emit gameover();
     }
@@ -425,7 +435,7 @@ void Scene::spawnEnemy()
             else // 一般
             {
                 enemyCounter++;
-                Enemy *enemy = new Enemy(nullptr,1);
+                Enemy *enemy = new Enemy(nullptr,0);
                 enemy->setPos(rand()%870-450 , -250 );
                 addItem(enemy);
                 enemy->setZValue(1);//使enemy always在前景

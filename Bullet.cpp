@@ -57,8 +57,8 @@ void Bullet::move() {
     // if direction .....
     //setPos(x(), y()-10);
     int dx;
-    dx=10*qCos(qDegreesToRadians(rotation()-90));
     int dy;
+    dx=10*qCos(qDegreesToRadians(rotation()-90));
     dy=10*qSin(qDegreesToRadians(rotation()-90));
     setPos(x()+dx,y()+dy);
 

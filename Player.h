@@ -15,11 +15,14 @@ public:
     void setRotation(qreal newRotation);
     void setlife();
     int getlife();
+    void setnumber(int n);
+    int getnumber();
 signals:
 
 private:
     qreal m_rotation;
     int life=3;
+    int number; //註明是player1還是2
 };
 
 #endif // PLAYER_H
