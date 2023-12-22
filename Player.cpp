@@ -36,4 +36,14 @@ int Player::getlife()
     return life;
 }
 
+void Player::setnumber(int n)
+{
+    number=n;
+}
+
+int Player::getnumber()
+{
+    return number;
+}
+
 

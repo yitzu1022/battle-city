@@ -104,17 +104,20 @@ Scene::Scene(QObject *parent,Score *score)
     number_of_player=2; //1代表1player 2代表2player
     if(number_of_player==1){   //one-player 模式
         player_1 = new Player();
+        player_1->setnumber(1);
         player_2 = new Player();
-        player_1->setPos(-140,250);
+        player_1->setPos(140,250);
         addItem(player_1);
         player_1->setZValue(1);//使player always在前景
     }else{    //teo-player 模式
         player_1 = new Player();
+        player_1->setnumber(1);
         player_1->setPos(140,250);
         addItem(player_1);
         player_1->setZValue(1);//使player always在前景
 
         player_2 = new Player();
+        player_2->setnumber(2);
         player_2->setPos(-140,250);
         addItem(player_2);
         player_2->setZValue(1);//使player always在前景
@@ -122,6 +125,7 @@ Scene::Scene(QObject *parent,Score *score)
 
     //new出enemy
     enemyCounter = 0 ;
+    enemyTotal = 0 ;
     spawnEnemy() ;
 
     timer = new QTimer() ;
@@ -217,6 +221,12 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
 {
     removeItem(bullet);
     delete bullet;
+    if(enemy-> kindof == 1)//是armor坦克
+    {
+        armorlife--; //起始4條命 減1條
+        if(armorlife !=0) //如果命還沒被減完就直接return，如果被減完，才會發生下面的事被delete
+            return;
+    }
     removeItem(enemy);
     delete enemy;
     enemyslain++;
@@ -227,7 +237,7 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     qDebug() << "Enemyslain:"<<enemyslain;
     enemyCounter --;
     spawnEnemy();
-    if(enemyslain++ == 20){
+    if(enemyslain == 20){
         emit gameover();
     }
 }
@@ -239,7 +249,14 @@ void Scene::loseOneLife(Bullet *bullet, Player *player)
     delete bullet;
     player->setlife();
     setplayerlife(player);
-    player->setPos(-140,250);
+    if(player->getnumber()==1){
+        player->setPos(140,250);
+        player->setRotation(0);
+    }
+    else{
+        player->setPos(-140,250);
+        player->setRotation(0);
+    }
     if(player->getlife()==0){
         emit gameover();
     }
@@ -377,17 +394,65 @@ void Scene::togglePause()
 
 void Scene::spawnEnemy()
 {
+    int a = rand() % 12;
     if(!isPaused){
         if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
             return;
         if(enemyCounter >= 4) //同時在場的enemy最多4個
             return;
-        Enemy *enemy = new Enemy();
-        enemy->setPos(rand()%1170-600 , -250 );
-        addItem(enemy);
-        enemy->setZValue(1);//使enemy always在前景
-        enemyCounter++;
-        qDebug() << "Counter:"<<enemyCounter;
+
+        enemyTotal++;
+
+        if (enemyTotal % 4 != 0) //不是SpecialEnemy，有可能為一般enemy、armor_tank、fast_tank、power_tank，使一般enemy的出現機率為75%
+        {
+            if(a == 0) // armor
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,1);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+            else if(a == 1) // fast
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,2);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+            else if(a == 2) // power
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,3);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+            else // 一般
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,1);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+
+        }
+        if (enemyTotal % 4 == 0)//是SpecialEnemy
+        {
+            enemyCounter++;
+            Enemy *enemy = new Enemy(nullptr,4);
+            enemy->setPos(rand()%870-450 , -250 );
+            addItem(enemy);
+            enemy->setZValue(1);//使enemy always在前景
+            qDebug() << "Counter:"<<enemyCounter;
+        }
+        qDebug() << "enemyTotal:"<<enemyTotal;
     }
 
 }

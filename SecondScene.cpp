@@ -120,17 +120,20 @@ SecondScene::SecondScene(QObject *parent)
     number_of_player=2; //1代表1player 2代表2player
     if(number_of_player==1){   //one-player 模式
         player_1 = new Player();
+        player_1->setnumber(1);
         player_2 = new Player();
         player_1->setPos(-120,250);
         addItem(player_1);
         player_1->setZValue(1);//使player always在前景
     }else{    //teo-player 模式
         player_1 = new Player();
+        player_1->setnumber(1);
         player_1->setPos(100,250);
         addItem(player_1);
         player_1->setZValue(1);//使player always在前景
 
         player_2 = new Player();
+        player_2->setnumber(2);
         player_2->setPos(-120,250);
         addItem(player_2);
         player_2->setZValue(1);//使player always在前景
