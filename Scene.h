@@ -10,12 +10,20 @@
 #include "Bullet.h"
 #include "Skill.h"
 #include "Score.h"
+#include "Grass.h"
+#include "River.h"
+#include "Ice.h"
 
 class Scene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit Scene(QObject *parent = nullptr,Score *score=nullptr);
+    explicit Scene(QObject *parent = nullptr,Score *score=nullptr, int Round=0);
+    void Round1Scene();
+    void Round2Scene();
+    void setGrasswall(int grassFirst_x,int grassFirst_y,int num_x,int num_y);
+    void setRiver(int riverFirst_x,int riverFirst_y,int num_x,int num_y);
+    void setIce(int IceFirst_x,int IceFirst_y,int num_x,int num_y);
     void setBrickwall(int brickFirst_x,int brickFirst_y,int num_x,int num_y);
     void setEagleBrickWall();
     void setenemy(int x);
@@ -48,6 +56,8 @@ signals:
     void player_tank(Player *player);
     void player_timer();
     void gameover();
+    void bulletStop();
+    void bulletStart();
 
 private:
     Eagle *eagle;
@@ -55,6 +65,9 @@ private:
     Brick *brickFirst;
     QList<Brick*> eagleBrick;
     Wall *wall;
+    Grass *grass;
+    River *river;
+    Ice *ice;
     Player *player_1;
     Player *player_2;
     QTimer *keyRespondTimer;
@@ -75,6 +88,7 @@ private:
     int number_of_player;
     QList<int> keys;
     bool bullet_faster;
+    int Round;
 protected:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);

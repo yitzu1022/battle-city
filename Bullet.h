@@ -33,6 +33,10 @@ signals:
     void bulletDeleted(Bullet *bullet);
     void bullet_bullet(Bullet *bullet1, Bullet *bullet2);
 
+public slots:
+    void stop();
+    void start();
+
 private:
     QTimer *timer;
     bool isMyBullet;

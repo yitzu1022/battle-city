@@ -75,6 +75,17 @@ void Bullet::move() {
 
 }
 
+void Bullet::stop()
+{
+    timer->stop();
+    qDebug() << "bullet stop";
+}
+
+void Bullet::start()
+{
+    timer->start();
+}
+
 qreal Bullet::rotation() const
 {
     return m_rotation;

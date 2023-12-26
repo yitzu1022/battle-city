@@ -5,6 +5,7 @@
 #include "ChooseScene.h"
 #include "widget.h"
 #include "Secondwidget.h"
+#include "Scene.h"
 namespace Ui {
 class ChooseRound;
 }
@@ -23,6 +24,7 @@ public:
 private:
     Ui::ChooseRound *ui;
     ChooseScene *scene;
+    Scene *gameScene;
     Widget *w;
     SecondWidget *s;
 

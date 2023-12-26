@@ -7,6 +7,7 @@
 #include <QPalette>
 #include <QPushbutton>
 #include <QDebug>
+#include "Scene.h"
 
 ChooseRound::ChooseRound(QWidget *parent) :
     QWidget(parent),
@@ -39,7 +40,9 @@ ChooseRound::ChooseRound(QWidget *parent) :
     btn->setFixedSize(newpixmap1.size());
     QGraphicsProxyWidget *bt1 = scene->addWidget(btn);
     bt1->setPos(-400,100);
-    connect(btn,&QPushButton::clicked,this,&ChooseRound::Close);
+    connect(btn,&QPushButton::clicked,this,&ChooseRound::Close);//click 1
+
+
     QPixmap pixmap2(":/images/level1.png");
     QPixmap newpixmap2= pixmap2.scaled(100,100,Qt::IgnoreAspectRatio);
     //scene->addPixmap(newpixmap);
@@ -50,9 +53,9 @@ ChooseRound::ChooseRound(QWidget *parent) :
     btn1->setFixedSize(newpixmap2.size());
     QGraphicsProxyWidget *bt2 = scene->addWidget(btn1);
     bt2->setPos(-300,100);
-    connect(btn1,&QPushButton::clicked,this,&ChooseRound::OpenSecond);
-    w = new Widget();
-    s = new SecondWidget();
+    connect(btn1,&QPushButton::clicked,this,&ChooseRound::OpenSecond);//click 2
+//    w = new Widget();
+//    s = new SecondWidget();
 
 }
 
@@ -61,13 +64,15 @@ ChooseRound::ChooseRound(QWidget *parent) :
 void ChooseRound::Close()
 {
     this->close();
+    w = new Widget(nullptr,1);
     w->show();
 }
 
 void ChooseRound::OpenSecond()
 {
     this->close();
-    s->show();
+    w = new Widget(nullptr,2);
+    w->show();
 }
 
 

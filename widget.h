@@ -15,7 +15,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
+    Widget(QWidget *parent = nullptr, int Round=0);
     void Close();
     ~Widget();
 
@@ -23,5 +23,6 @@ private:
     Ui::Widget *ui;
     Scene *scene;
     Score *score;
+    int Round;
 };
 #endif // WIDGET_H

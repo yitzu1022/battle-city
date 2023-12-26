@@ -173,6 +173,7 @@ void SecondScene::setGrasswall(int grassFirst_x, int grassFirst_y, int num_x, in
         grassFirst_x=grassFirst_x+grass->boundingRect().width();
     }
 }
+
 void SecondScene::setRiver(int riverFirst_x, int riverFirst_y, int num_x, int num_y)
 {
     for(int i=0;i<num_x;i++){

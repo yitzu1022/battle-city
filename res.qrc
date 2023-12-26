@@ -26,5 +26,6 @@
         <file>Special_enemy.png</file>
         <file>protect.png</file>
         <file>tank.png</file>
+        <file>player2.png</file>
     </qresource>
 </RCC>

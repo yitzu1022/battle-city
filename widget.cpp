@@ -6,12 +6,12 @@
 #include <QGraphicsProxyWidget>
 #include <QMessageBox>
 
-Widget::Widget(QWidget *parent)
+Widget::Widget(QWidget *parent, int Round)
     : QWidget(parent)
-    , ui(new Ui::Widget)
+    , ui(new Ui::Widget), Round(Round)
 {
     score = new Score();
-    scene =new Scene(this,score);
+    scene =new Scene(this,score,Round);
     ui->setupUi(this);
     scene->setSceneRect(-600,-300,1200,600);  //設置Scene的大小與座標，並要使原點在中間，前兩位為設置左上角的座標(y座標往上為負，往下為正)
     QPixmap pixmap(":/images/background.jpg");
