@@ -24,5 +24,7 @@
         <file>Fast_tank.png</file>
         <file>Power_tank.png</file>
         <file>Special_enemy.png</file>
+        <file>protect.png</file>
+        <file>tank.png</file>
     </qresource>
 </RCC>

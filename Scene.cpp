@@ -161,7 +161,6 @@ Scene::Scene(QObject *parent,Score *score)
     keyRespondTimer = new QTimer();  //控制player的移動
     keyRespondTimer->start(100);
     connect(keyRespondTimer,&QTimer::timeout, this, &Scene::player_move);
-
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -261,6 +260,7 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     delete bullet;
     if(enemy-> kindof == 1)//是armor坦克
     {
+        qDebug() << armorlife;
         armorlife--; //起始4條命 減1條
         if(armorlife !=0) //如果命還沒被減完就直接return，如果被減完，才會發生下面的事被delete
             return;
@@ -274,7 +274,6 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     qDebug() << "score:" << sc->getscore();
     qDebug() << "Enemyslain:"<<enemyslain;
     enemyCounter --;
-    spawnEnemy();
     if(enemyslain == 20){
         emit gameover();
     }
@@ -307,41 +306,63 @@ void Scene::handleBulletDeleted(Bullet *bullet)
     delete bullet;
 }
 
-void Scene::addOneLife()
+void Scene::addOneLife(Player *player)
 {
-    // add one life
-    qDebug("add one life");
+    player->addlife();
+    removeItem(textlife);
+    setplayerlife(player);
 }
 
 void Scene::grenadeBoom()
 {
     qDebug() << "Enemies:";
+    int k = enemyslain;
 
     // 想要放爆炸的動畫ＱＱ
-    for(int i = enemies.length(); i > enemies.length()-enemyCounter; i--){
+    for(int i = enemies.length(); i > k; i--){
         Enemy *enemy = enemies[i-1];
         removeItem(enemy);
         delete enemy;
         qDebug() << i;
+        enemyslain++;
+        removeItem(textenemylife);
+        setenemy(20-enemyslain);
+        sc->setscore(enemyslain*100);
+        qDebug() << "score:" << sc->getscore();
+        qDebug() << "Enemyslain:"<<enemyslain;
+        enemyCounter --;
     }
+    if(enemyslain == 20){
+        emit gameover();
+    }
+    setenemy(20-enemyslain);
     update();
 }
 
 void Scene::helmetProtect(Player *player)
 {
+    player->setPixmap(QPixmap(":/images/protect.png").scaled(30,30,Qt::KeepAspectRatio));
     player->Protect();
+    QTimer::singleShot(10000, [=]() {
+        player->setPixmap(QPixmap(":/images/player.png"));
+    });
 }
 
 void Scene::shovelChange()
 {
     for(Brick* brick : eagleBrick){
-        brick -> setWall();
+        if(brick){
+            brick -> setWall();
+        }
     }
 }
 
 void Scene::playergetStar()
 {
-    //    bullet->setFast();
+    bullet_faster = true;
+    QTimer::singleShot(10000, [=]() {
+        bullet_faster = false;
+    });
 }
 
 void Scene::enemyStop()
@@ -413,6 +434,9 @@ void Scene::player_move()
             break;}
         case Qt::Key_Space:{
             Bullet *bullet = new Bullet(true);
+            if (bullet_faster == true){
+                bullet ->timer->start(25) ;
+            }
             connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
             connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
             connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
@@ -425,6 +449,9 @@ void Scene::player_move()
         case Qt::Key_Shift:{
             if(number_of_player==2){                     //有兩個player時才會進入此條件
                 Bullet *bullet = new Bullet(true);
+                if (bullet_faster == true){
+                    bullet ->timer->start(25) ;
+                }
                 connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
                 connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
                 connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
@@ -457,7 +484,7 @@ void Scene::player_move()
                 }else if(skill->getSkillType() == "star"){
                     emit player_star();
                 }else if(skill->getSkillType() == "tank"){
-                    emit player_tank();
+                    emit player_tank(player_1);
                 }else if(skill->getSkillType() == "timer"){
                     emit player_timer();
                 }else{
@@ -486,7 +513,7 @@ void Scene::player_move()
                 }else if(skill->getSkillType() == "star"){
                     emit player_star();
                 }else if(skill->getSkillType() == "tank"){
-                    emit player_tank();
+                    emit player_tank(player_2);
                 }else if(skill->getSkillType() == "timer"){
                     emit player_timer();
                 }else{
@@ -522,6 +549,8 @@ void Scene::spawnEnemy()
             return;
         if(enemyCounter >= 4) //同時在場的enemy最多4個
             return;
+        if(timerSkill == true)
+            return;
 
         enemyTotal++;
 
@@ -531,6 +560,7 @@ void Scene::spawnEnemy()
             {
                 enemyCounter++;
                 Enemy *enemy = new Enemy(nullptr,1);
+                enemies.append(enemy);
                 enemy->setPos(rand()%870-450 , -250 );
                 addItem(enemy);
                 enemy->setZValue(1);//使enemy always在前景
@@ -540,6 +570,7 @@ void Scene::spawnEnemy()
             {
                 enemyCounter++;
                 Enemy *enemy = new Enemy(nullptr,2);
+                enemies.append(enemy);
                 enemy->setPos(rand()%870-450 , -250 );
                 addItem(enemy);
                 enemy->setZValue(1);//使enemy always在前景
@@ -549,6 +580,7 @@ void Scene::spawnEnemy()
             {
                 enemyCounter++;
                 Enemy *enemy = new Enemy(nullptr,3);
+                enemies.append(enemy);
                 enemy->setPos(rand()%870-450 , -250 );
                 addItem(enemy);
                 enemy->setZValue(1);//使enemy always在前景
@@ -558,6 +590,7 @@ void Scene::spawnEnemy()
             {
                 enemyCounter++;
                 Enemy *enemy = new Enemy(nullptr,0);
+                enemies.append(enemy);
                 enemy->setPos(rand()%870-450 , -250 );
                 addItem(enemy);
                 enemy->setZValue(1);//使enemy always在前景
@@ -569,6 +602,7 @@ void Scene::spawnEnemy()
         {
             enemyCounter++;
             Enemy *enemy = new Enemy(nullptr,4);
+            enemies.append(enemy);
             enemy->setPos(rand()%870-450 , -250 );
             addItem(enemy);
             enemy->setZValue(1);//使enemy always在前景

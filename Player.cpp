@@ -4,7 +4,7 @@
 Player::Player(QObject *parent)
     : QObject{parent}
 {
-    setPixmap(QPixmap(":/images/player.png"));
+    setPixmap(QPixmap(":/images/player.png").scaled(25,25,Qt::KeepAspectRatio));
 
 }
 
@@ -38,6 +38,11 @@ void Player::Protect()
 void Player::setlife()
 {
     life--;
+}
+
+void Player::addlife()
+{
+    life++;
 }
 
 int Player::getlife()

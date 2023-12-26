@@ -67,9 +67,9 @@ void Bullet::move() {
     }
 
     int dx;
-    dx=speed*qCos(qDegreesToRadians(rotation()-90));
+    dx=10*qCos(qDegreesToRadians(rotation()-90));
     int dy;
-    dy=speed*qSin(qDegreesToRadians(rotation()-90));
+    dy=10*qSin(qDegreesToRadians(rotation()-90));
     setPos(x()+dx,y()+dy);
 
 
@@ -80,12 +80,6 @@ qreal Bullet::rotation() const
     return m_rotation;
 }
 
-void Bullet::setFast()
-{
-    if (isMyBullet = true){
-        speed = 20;
-    }
-}
 
 void Bullet::setRotation(qreal newRotation)
 {

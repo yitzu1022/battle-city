@@ -29,12 +29,13 @@ public slots: //slots function
     void handleBulletDeleted(Bullet *bullet);
 
     //skill
-    void addOneLife();
+    void addOneLife(Player *player);
     void grenadeBoom();
     void helmetProtect(Player *player);
     void shovelChange();
     void playergetStar();
     void enemyStop();
+
     void player_move();
     void togglePause();
 
@@ -44,7 +45,7 @@ signals:
     void player_helmet(Player *player);
     void player_shovel();
     void player_star();
-    void player_tank();
+    void player_tank(Player *player);
     void player_timer();
     void gameover();
 
@@ -62,9 +63,9 @@ private:
     bool timerSkill = false;
     QTimer *timer ;
     Skill *skill;
-    int enemyCounter;
-    int enemyslain = 0;
-    int enemyTotal=0;
+    int enemyCounter; // on scene
+    int enemyslain = 0; // killed
+    int enemyTotal=0; // total
     int armorlife=4;
     bool isPaused=false;
     QGraphicsTextItem *text;
@@ -73,6 +74,7 @@ private:
     Score *sc;
     int number_of_player;
     QList<int> keys;
+    bool bullet_faster;
 protected:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
