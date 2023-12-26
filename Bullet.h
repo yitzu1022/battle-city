@@ -37,6 +37,7 @@ private:
     int speed = 10;
     bool isMyBullet;
     qreal m_rotation;
+friend class Enemy;
 };
 
 #endif // BULLET_H

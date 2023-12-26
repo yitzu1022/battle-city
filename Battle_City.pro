@@ -11,11 +11,22 @@ CONFIG += c++17
 SOURCES += \
     Brick.cpp \
     Bullet.cpp \
+    ChooseRound.cpp \
+    ChoosesScene.cpp \
     Eagle.cpp \
     Enemy.cpp \
+    Grass.cpp \
+    Ice.cpp \
     Player.cpp \
+    River.cpp \
     Scene.cpp \
     Skill.cpp \
+    Score.cpp \
+    ScoreScene.cpp \
+    SecondScene.cpp \
+    Secondwidget.cpp \
+    Start.cpp \
+    Startscene.cpp \
     Wall.cpp \
     main.cpp \
     widget.cpp
@@ -23,15 +34,29 @@ SOURCES += \
 HEADERS += \
     Brick.h \
     Bullet.h \
+    ChooseRound.h \
+    ChooseScene.h \
     Eagle.h \
     Enemy.h \
+    Grass.h \
+    Ice.h \
     Player.h \
+    River.h \
     Scene.h \
-    Skill.h \
+    Skill.h \Score.h \
+    ScoreScene.h \
+    SecondScene.h \
+    Secondwidget.h \
+    Start.h \
+    Startscene.h \
     Wall.h \
     widget.h
 
 FORMS += \
+    ChooseRound.ui \
+    Score.ui \
+    Secondwidget.ui \
+    Start.ui \
     widget.ui
 
 # Default rules for deployment.

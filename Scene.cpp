@@ -3,12 +3,19 @@
 #include <QKeyEvent>
 #include <QTimer>
 #include <QList>
+#include <QFont>
 #include <stdlib.h>
 #include <QMetaType>
-
-Scene::Scene(QObject *parent)
+#include <QPushButton>
+#include <QGraphicsProxyWidget>
+#include <QPalette>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsTextItem>
+Scene::Scene(QObject *parent,Score *score)
     : QGraphicsScene{parent}
 {
+    sc = score;
+    setenemy(20);
     //new出Eagle
     eagle=new Eagle();
     eagle->setPos(0-eagle->boundingRect().width()/2+2,300-eagle->boundingRect().height());
@@ -93,30 +100,68 @@ Scene::Scene(QObject *parent)
     setEagleBrickWall();
 
     //new出player
-    player = new Player();
-    player->setPos(-140,250);
-    addItem(player);
-    player->setZValue(1);//使player always在前景
+    number_of_player=2; //1代表1player 2代表2player
+    if(number_of_player==1){   //one-player 模式
+        player_1 = new Player();
+        player_1->setnumber(1);
+        player_2 = new Player();
+        player_1->setPos(140,250);
+        addItem(player_1);
+        player_1->setZValue(1);//使player always在前景
+    }else{    //teo-player 模式
+        player_1 = new Player();
+        player_1->setnumber(1);
+        player_1->setPos(140,250);
+        addItem(player_1);
+        player_1->setZValue(1);//使player always在前景
+
+        player_2 = new Player();
+        player_2->setnumber(2);
+        player_2->setPos(-140,250);
+        addItem(player_2);
+        player_2->setZValue(1);//使player always在前景
+    }
 
     //new出enemy
     enemyCounter = 0 ;
+    enemyTotal = 0 ;
     spawnEnemy() ;
 
     timer = new QTimer() ;
     connect(timer , &QTimer::timeout , this ,&Scene::spawnEnemy );
     timer->start(2000) ;
 
-//    //test skill
-//    skill = new Skill();
-//    skill->setPos(-120, 250);
-//    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
-//    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
-//    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
-//    connect(this, &Scene::player_shovel, this, &Scene::shovelChange);
-//    connect(this, &Scene::player_star, this, &Scene::playergetStar);
-//    connect(this, &Scene::player_timer, this, &Scene::enemyStop);
-//    addItem(skill);
-//    skill->setZValue(1);
+    QGraphicsTextItem *tex = new QGraphicsTextItem("Life:");
+    QFont fon("Arial",32);
+    tex->setFont(fon);
+    tex->setDefaultTextColor(Qt::white);
+    tex->setZValue(2);
+    tex->setPos(480,-50);
+    addItem(tex);
+    QGraphicsTextItem *texen = new QGraphicsTextItem("Enemy:");
+    QFont fonen("Arial",32);
+    texen->setFont(fonen);
+    texen->setDefaultTextColor(Qt::white);
+    texen->setZValue(2);
+    texen->setPos(-600,-50);
+    addItem(texen);
+    setplayerlife(player_1);
+    QPushButton *btn = new QPushButton("||");
+    btn->setFixedSize(30,30);
+    btn->setStyleSheet("font-size:20px ; background-color:Dark ; color:black");
+    QGraphicsProxyWidget *button = addWidget(btn);
+    button->setPos(480,-280);
+    button->setZValue(5);
+    connect(btn,&QPushButton::clicked,this,&Scene::togglePause);
+    text = new QGraphicsTextItem("pause");
+    QFont font("Arial",64);
+    text->setFont(font);
+    text->setDefaultTextColor(Qt::white);
+
+    keyRespondTimer = new QTimer();  //控制player的移動
+    keyRespondTimer->start(100);
+    connect(keyRespondTimer,&QTimer::timeout, this, &Scene::player_move);
+
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -160,6 +205,32 @@ void Scene::setEagleBrickWall()
     }
 }
 
+void Scene::setenemy(int x)
+{
+    textenemylife = new QGraphicsTextItem(QString::number(x));
+    QFont font("Arial",32);
+    textenemylife->setFont(font);
+    textenemylife->setDefaultTextColor(Qt::white);
+    textenemylife->setPos(-550,0);
+    textenemylife->setZValue(2);
+    addItem(textenemylife);
+}
+
+void Scene::setplayerlife(Player *player)
+{
+
+    int m;
+    m = player->getlife();
+    textlife = new QGraphicsTextItem(QString::number(m));
+    QFont font("Arial",32);
+    textlife->setFont(font);
+    textlife->setDefaultTextColor(Qt::white);
+    textlife->setPos(500,0);
+    textlife->setZValue(2);
+    addItem(textlife);
+}
+
+
 void Scene::handleBrickDeleted(Bullet *bullet, Brick *brick){
     removeItem(bullet);
     delete bullet;
@@ -169,7 +240,7 @@ void Scene::handleBrickDeleted(Bullet *bullet, Brick *brick){
 
 void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
 {
-    clear();
+    emit gameover();
 }
 
 void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
@@ -188,26 +259,46 @@ void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
     //}
     removeItem(bullet);
     delete bullet;
+    if(enemy-> kindof == 1)//是armor坦克
+    {
+        armorlife--; //起始4條命 減1條
+        if(armorlife !=0) //如果命還沒被減完就直接return，如果被減完，才會發生下面的事被delete
+            return;
+    }
     removeItem(enemy);
     delete enemy;
     enemyslain++;
+    removeItem(textenemylife);
+    setenemy(20-enemyslain);
+    sc->setscore(enemyslain*100);
+    qDebug() << "score:" << sc->getscore();
     qDebug() << "Enemyslain:"<<enemyslain;
     enemyCounter --;
     spawnEnemy();
+    if(enemyslain == 20){
+        emit gameover();
+    }
 }
 
 void Scene::loseOneLife(Bullet *bullet, Player *player)
 {
     removeItem(bullet);
+    removeItem(textlife);
     delete bullet;
-    removeItem(player);
-    delete player;
+    player->setlife();
+    setplayerlife(player);
+    if(player->getnumber()==1){
+        player->setPos(140,250);
+        player->setRotation(0);
+    }
+    else{
+        player->setPos(-140,250);
+        player->setRotation(0);
+    }
+    if(player->getlife()==0){
+        emit gameover();
+    }
 
-    qDebug("player deleted");
-    // if still have life
-    player = new Player();
-    player->setPos(-140,250);
-    addItem(player);
 }
 
 void Scene::handleBulletDeleted(Bullet *bullet)
@@ -265,80 +356,242 @@ void Scene::enemyStop()
         timerSkill = false;
     });
 }
-
-
-void Scene::spawnEnemy()
-{
-    if(timerSkill == true)
-        return;
-    if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
-        return;
-    if(enemyCounter >= 4) //同時在場的enemy最多4個
-        return;
-    Enemy *enemy = new Enemy();
-    enemies.append(enemy);
-    enemy->setPos(rand()%1170-600 , -250 );
-    addItem(enemy);
-    enemy->setZValue(1);//使enemy always在前景
-    enemyCounter++;
-    qDebug() << "Counter:"<<enemyCounter;
-}
-
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
-void Scene::keyPressEvent(QKeyEvent *event){
-
-    QPointF pos = player->pos();
-    if(event->key() == Qt::Key_Left && pos.x()>(-600)){
-        player->setRotation(270);
-        player->setPos(pos+QPointF(-5,0));
-    }else if(event->key() == Qt::Key_Right && pos.x()<(570)){
-        player->setRotation(90);
-        player->setPos(pos+QPointF(5,0));
-    }else if(event->key() == Qt::Key_Up && pos.y()>(-300)){
-        player->setRotation(0);
-        player->setPos(pos+QPointF(0,-5));
-    }else if(event->key() == Qt::Key_Down && pos.y()<(270)){
-        player->setRotation(180);
-        player->setPos(pos+QPointF(0,5));
-    }else if (event->key() == Qt::Key_Space) {
-        Bullet *bullet = new Bullet(true);
-        connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
-        connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
-        connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
-        connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
-        bullet->setPos(player->pos());
-        bullet->setRotation(player->rotation());
-        addItem(bullet);
-    }
-
-    QList<QGraphicsItem *> colliding_items = player->collidingItems();
-    foreach (QGraphicsItem* item,colliding_items) {
-        Brick *brick = dynamic_cast<Brick*>(item);
-        Wall *wall = dynamic_cast<Wall*>(item);
-        Enemy *enemy = dynamic_cast<Enemy*>(item);
-        Skill *skill = dynamic_cast<Skill*>(item);
-        if(brick || wall || enemy){
-            player->setPos(pos);
-            return;
-        }else if (skill){ //grenade, helmet, shovel, star, tank, timer
-            if (skill->getSkillType() == "grenade"){
-                emit player_grenade();
-            }else if(skill->getSkillType() == "helmet"){
-                emit player_helmet(player);
-            }else if(skill->getSkillType() == "shovel"){
-                emit player_shovel();
-            }else if(skill->getSkillType() == "star"){
-                emit player_star();
-            }else if(skill->getSkillType() == "tank"){
-                emit player_tank();
-            }else if(skill->getSkillType() == "timer"){
-                emit player_timer();
-            }else{
-                qDebug("skillType error");
+void Scene::player_move()
+{
+    QPointF pos_1 = player_1->pos();
+    QPointF pos_2 = player_2->pos();
+    foreach (int key, keys) {
+        switch (key) {
+        case Qt::Key_Left:{
+            if(pos_1.x()>(-450)){
+                player_1->setRotation(270);
+                player_1->setPos(pos_1+QPointF(-5,0));
             }
+            break;}
+        case Qt::Key_Right:{
+            if(pos_1.x()<(420)){
+                player_1->setRotation(90);
+                player_1->setPos(pos_1+QPointF(5,0));
+            }
+            break;}
+        case Qt::Key_Up:{
+            if(pos_1.y()>(-300)){
+                player_1->setRotation(0);
+                player_1->setPos(pos_1+QPointF(0,-5));
+            }
+            break;}
+        case Qt::Key_Down:{
+            if(pos_1.y()<(270)){
+                player_1->setRotation(180);
+                player_1->setPos(pos_1+QPointF(0,5));
+            }
+            break;}
+        case Qt::Key_A:{
+            if(number_of_player==2 &&pos_2.x()>(-450)){                    //有兩個player時才會進入此條件
+                player_2->setRotation(270);
+                player_2->setPos(pos_2+QPointF(-5,0));
+            }
+            break;}
+        case Qt::Key_D:{
+            if(number_of_player==2 && pos_2.x()<(420)){                      //有兩個player時才會進入此條件
+                player_2->setRotation(90);
+                player_2->setPos(pos_2+QPointF(5,0));
+            }
+            break;}
+        case Qt::Key_W:{
+            if(number_of_player==2 &&pos_2.y()>(-300)){                       //有兩個player時才會進入此條件
+                player_2->setRotation(0);
+                player_2->setPos(pos_2+QPointF(0,-5));
+            }
+            break;}
+        case Qt::Key_S:{
+            if(number_of_player==2 && pos_2.y()<(270)){                        //有兩個player時才會進入此條件
+                player_2->setRotation(180);
+                player_2->setPos(pos_2+QPointF(0,5));
+            }
+            break;}
+        case Qt::Key_Space:{
+            Bullet *bullet = new Bullet(true);
+            connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
+            connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
+            connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
+            connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
+            bullet->setPos(player_1->pos());
+            bullet->setRotation(player_1->rotation());
+            addItem(bullet);
+            break;
+        }
+        case Qt::Key_Shift:{
+            if(number_of_player==2){                     //有兩個player時才會進入此條件
+                Bullet *bullet = new Bullet(true);
+                connect(bullet, &Bullet::bulletHitsBrick, this, &Scene::handleBrickDeleted);
+                connect(bullet, &Bullet::bulletHitsEagle, this, &Scene::GameEndded);
+                connect(bullet, &Bullet::bulletHitsEnemy, this, &Scene::enemyDestroy);
+                connect(bullet, &Bullet::bullet_bullet, this, &Scene::handleBulletDeleted);
+                bullet->setPos(player_2->pos());
+                bullet->setRotation(player_2->rotation());
+                addItem(bullet);
+            }
+            break;
+        }
+        default:
+            break;
+        }
+        QList<QGraphicsItem *> colliding_items_1 = player_1->collidingItems();
+        foreach (QGraphicsItem* item,colliding_items_1) {
+            Brick *brick = dynamic_cast<Brick*>(item);
+            Wall *wall = dynamic_cast<Wall*>(item);
+            Enemy *enemy = dynamic_cast<Enemy*>(item);
+            if(brick || wall || enemy){
+                player_1->setPos(pos_1);
+                return;
+            } else if (skill){ //grenade, helmet, shovel, star, tank, timer
+                if (skill->getSkillType() == "grenade"){
+                    emit player_grenade();
+                }else if(skill->getSkillType() == "helmet"){
+                    emit player_helmet(player);
+                }else if(skill->getSkillType() == "shovel"){
+                    emit player_shovel();
+                }else if(skill->getSkillType() == "star"){
+                    emit player_star();
+                }else if(skill->getSkillType() == "tank"){
+                    emit player_tank();
+                }else if(skill->getSkillType() == "timer"){
+                    emit player_timer();
+                }else{
+                    qDebug("skillType error");
+                }
             removeItem(skill);
             delete skill;
         }
+        if(number_of_player==2){                                //有兩個player時才會進入此條件
+            QList<QGraphicsItem *> colliding_items_2 = player_2->collidingItems();
+            foreach (QGraphicsItem* item,colliding_items_2) {
+                Brick *brick = dynamic_cast<Brick*>(item);
+                Wall *wall = dynamic_cast<Wall*>(item);
+                Enemy *enemy = dynamic_cast<Enemy*>(item);
+                if(brick || wall || enemy){
+                    player_2->setPos(pos_2);
+                    return;
+                } else if (skill){ //grenade, helmet, shovel, star, tank, timer
+                  if (skill->getSkillType() == "grenade"){
+                      emit player_grenade();
+                  }else if(skill->getSkillType() == "helmet"){
+                      emit player_helmet(player);
+                  }else if(skill->getSkillType() == "shovel"){
+                      emit player_shovel();
+                  }else if(skill->getSkillType() == "star"){
+                      emit player_star();
+                  }else if(skill->getSkillType() == "tank"){
+                      emit player_tank();
+                  }else if(skill->getSkillType() == "timer"){
+                      emit player_timer();
+                  }else{
+                      qDebug("skillType error");
+                  }
+                  removeItem(skill);
+                  delete skill;
+                  }
+        }
+
     }
+
+}
+
+void Scene::togglePause()
+{
+    isPaused = !isPaused;
+    if (isPaused) {
+        text->setPos(0,0);
+        text->setZValue(5);
+        addItem(text);
+        qDebug("Game paused");
+    } else {
+        removeItem(text);
+        qDebug("Game Resumed");
+    }
+}
+
+void Scene::spawnEnemy()
+{
+    int a = rand() % 12;
+    if(!isPaused){
+        if(enemyslain >= 17) //擊殺20個enemy就獲勝，所以擊殺16個enemy之後就不新增enemy了
+            return;
+        if(enemyCounter >= 4) //同時在場的enemy最多4個
+            return;
+
+        enemyTotal++;
+
+        if (enemyTotal % 4 != 0) //不是SpecialEnemy，有可能為一般enemy、armor_tank、fast_tank、power_tank，使一般enemy的出現機率為75%
+        {
+            if(a == 0) // armor
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,1);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+            else if(a == 1) // fast
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,2);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+            else if(a == 2) // power
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,3);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+            else // 一般
+            {
+                enemyCounter++;
+                Enemy *enemy = new Enemy(nullptr,0);
+                enemy->setPos(rand()%870-450 , -250 );
+                addItem(enemy);
+                enemy->setZValue(1);//使enemy always在前景
+                qDebug() << "Counter:"<<enemyCounter;
+            }
+
+        }
+        if (enemyTotal % 4 == 0)//是SpecialEnemy
+        {
+            enemyCounter++;
+            Enemy *enemy = new Enemy(nullptr,4);
+            enemy->setPos(rand()%870-450 , -250 );
+            addItem(enemy);
+            enemy->setZValue(1);//使enemy always在前景
+            qDebug() << "Counter:"<<enemyCounter;
+        }
+        qDebug() << "enemyTotal:"<<enemyTotal;
+    }
+
+}
+
+
+
+
+void Scene::keyPressEvent(QKeyEvent *event){  //當按鍵按下
+    if(!event->isAutoRepeat())
+        keys.append(event->key());  //若非長按時自動觸發的按下，就將key值加入容器
+    if(!keyRespondTimer->isActive())
+        keyRespondTimer->start(100);  //若定時器不在運行，就啟動它
+}
+
+void Scene::keyReleaseEvent(QKeyEvent *event){ //當按鍵釋放
+    if(!event->isAutoRepeat())
+        keys.removeAll(event->key());  //若非長按時自動觸發的釋放，就將key值從容器中刪除
+    if(keys.isEmpty())
+        keyRespondTimer->stop(); //若容器空了，則關閉定時器
 }
 

@@ -12,5 +12,17 @@
         <file>timer.png</file>
         <file>star.png</file>
         <file>player.png</file>
+        <file>btcity.png</file>
+        <file>level1.png</file>
+        <file>home.png</file>
+        <file>retry.png</file>
+        <file>return.png</file>
+        <file>grass.jpg</file>
+        <file>Ice.png</file>
+        <file>river.jpg</file>
+        <file>Armor_tank.png</file>
+        <file>Fast_tank.png</file>
+        <file>Power_tank.png</file>
+        <file>Special_enemy.png</file>
     </qresource>
 </RCC>
