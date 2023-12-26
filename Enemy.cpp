@@ -71,6 +71,14 @@ void Enemy::rotate_to()
         setRotation(180);
 }
 
+
+void Enemy::stop10sec()
+{
+    timer->stop();
+    QTimer::singleShot(10000, [=]() {
+        timer->start();
+    });
+
 void Enemy::setPause()
 {
      isPaused = !isPaused;

@@ -26,40 +26,50 @@ void Bullet::move() {
     // if the bullet is out of Scene, it also should be delete ...add
     QList<QGraphicsItem *> colliding_items = collidingItems();
     foreach (QGraphicsItem *item, colliding_items) {
-        if (dynamic_cast<Brick *>(item)) {
-            emit bulletHitsBrick(this, dynamic_cast<Brick *>(item));
+        Brick *brick = dynamic_cast<Brick*>(item);
+        Wall *wall = dynamic_cast<Wall*>(item);
+        Enemy *enemy = dynamic_cast<Enemy*>(item);
+        Player *player = dynamic_cast<Player*>(item);
+        Eagle *eagle = dynamic_cast<Eagle*>(item);
+        Bullet *bullet = dynamic_cast<Bullet*>(item);
+        if (brick && brick->isProtect() == false) {
+            emit bulletHitsBrick(this, brick);
             return;
         }
-        else if (dynamic_cast<Eagle *>(item)) {
-            emit bulletHitsEagle(this, dynamic_cast<Eagle *>(item));
+        else if (brick && brick->isProtect() == true){
+            emit bullet_bullet(this, bullet);
             return;
         }
-        else if (dynamic_cast<Enemy *>(item) && isMine() == true) {
-            emit bulletHitsEnemy(this, dynamic_cast<Enemy *>(item));
+        else if (eagle) {
+            emit bulletHitsEagle(this, eagle);
+            return;
+        }
+        else if (enemy && isMine() == true) {
+            emit bulletHitsEnemy(this, enemy);
             return;
         }
 //        else if (dynamic_cast<Enemy *>(item) && isMine() == false) {
 //            emit bulletDeleted(this);
 //            return;
 //        }
-        else if (dynamic_cast<Player *>(item) && isMine() == false) {
-            emit bulletHitsPlayer(this, dynamic_cast<Player *>(item));
+        else if (player && isMine() == false && player->isProtect() == false) {
+            emit bulletHitsPlayer(this, player);
             return;
         }
-        else if (dynamic_cast<Bullet *>(item)){ // bullet hits bullet
-            emit bullet_bullet(this, dynamic_cast<Bullet *>(item));
+        else if (bullet){ // bullet hits bullet
+            emit bullet_bullet(this, bullet);
+            return;
+        }
+        else if (wall){
+            emit bullet_bullet(this, bullet);
             return;
         }
     }
 
-    // Move the bullet up
-    // Should be change by direction
-    // if direction .....
-    //setPos(x(), y()-10);
     int dx;
+    dx=speed*qCos(qDegreesToRadians(rotation()-90));
     int dy;
-    dx=10*qCos(qDegreesToRadians(rotation()-90));
-    dy=10*qSin(qDegreesToRadians(rotation()-90));
+    dy=speed*qSin(qDegreesToRadians(rotation()-90));
     setPos(x()+dx,y()+dy);
 
 
@@ -68,6 +78,13 @@ void Bullet::move() {
 qreal Bullet::rotation() const
 {
     return m_rotation;
+}
+
+void Bullet::setFast()
+{
+    if (isMyBullet = true){
+        speed = 20;
+    }
 }
 
 void Bullet::setRotation(qreal newRotation)

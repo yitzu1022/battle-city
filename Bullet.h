@@ -18,6 +18,8 @@ public:
     void setRotation(qreal newRotation);
     qreal rotation() const;
 
+    void setFast();
+
 private slots:
     void move();
 
@@ -32,6 +34,7 @@ signals:
 
 private:
     QTimer *timer;
+    int speed = 10;
     bool isMyBullet;
     qreal m_rotation;
 friend class Enemy;

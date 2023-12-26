@@ -17,6 +17,7 @@ public:
     void setRotation(qreal newRotation);
     qreal rotation() const;
     void rotate_to();
+    void stop10sec();
     void setPause();
 
 public slots: //slots function

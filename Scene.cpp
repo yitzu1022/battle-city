@@ -5,6 +5,7 @@
 #include <QList>
 #include <QFont>
 #include <stdlib.h>
+#include <QMetaType>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 #include <QPalette>
@@ -96,9 +97,7 @@ Scene::Scene(QObject *parent,Score *score)
     setBrickwall(-398,-30,2,1);
     setBrickwall(-338+brick->boundingRect().width()*16.5+60,-30,2,1);
     //用來建立eagle的堡壘
-    setBrickwall(0-brick->boundingRect().width()*2-10,217,1,4);
-    setBrickwall(0-brick->boundingRect().width()*2-10,197,6,1);
-    setBrickwall(51,217,1,4);
+    setEagleBrickWall();
 
     //new出player
     number_of_player=2; //1代表1player 2代表2player
@@ -162,6 +161,7 @@ Scene::Scene(QObject *parent,Score *score)
     keyRespondTimer = new QTimer();  //控制player的移動
     keyRespondTimer->start(100);
     connect(keyRespondTimer,&QTimer::timeout, this, &Scene::player_move);
+
 }
 //用來建造磚塊牆的function
 void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
@@ -176,6 +176,32 @@ void Scene::setBrickwall(int brickFirst_x, int brickFirst_y,int num_x,int num_y)
             brick->setZValue(1);
         }
         brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
+    }
+}
+
+void Scene::setEagleBrickWall()
+{
+    QList<double> x = {0-brick->boundingRect().width()*2-10, 0-brick->boundingRect().width()*2-10, 51};
+    QList<double> y = {217, 197, 217};
+    QList<int> w = {1, 6, 1};
+    QList<int> h = {4, 1, 4};
+    for (int j = 0; j < 3; j++){
+        double brickFirst_x = x[j];
+        double brickFirst_y = y[j];
+        int num_x = w[j];
+        int num_y = h[j];
+        for(int i=0;i<num_x;i++){
+            int d=0;
+            for(int j=0;j <num_y;j++){
+                brick=new Brick();
+                eagleBrick.append(brick);
+                brick->setPos(brickFirst_x,brickFirst_y+d);
+                d = d+brick->boundingRect().height()-17;
+                addItem(brick);
+                brick->setZValue(1);
+            }
+            brickFirst_x=brickFirst_x+brick->boundingRect().width()-10;
+        }
     }
 }
 
@@ -219,6 +245,18 @@ void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
 
 void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
 {
+    //if (enemy->isSpecial() == 1){ //如果是特殊敵人
+    Skill *skill = new Skill();
+    skill->setPos(enemy->pos());
+    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
+    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
+    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
+    connect(this, &Scene::player_shovel, this, &Scene::shovelChange);
+    connect(this, &Scene::player_star, this, &Scene::playergetStar);
+    connect(this, &Scene::player_timer, this, &Scene::enemyStop);
+    addItem(skill);
+    skill->setZValue(1);
+    //}
     removeItem(bullet);
     delete bullet;
     if(enemy-> kindof == 1)//是armor坦克
@@ -269,6 +307,55 @@ void Scene::handleBulletDeleted(Bullet *bullet)
     delete bullet;
 }
 
+void Scene::addOneLife()
+{
+    // add one life
+    qDebug("add one life");
+}
+
+void Scene::grenadeBoom()
+{
+    qDebug() << "Enemies:";
+
+    // 想要放爆炸的動畫ＱＱ
+    for(int i = enemies.length(); i > enemies.length()-enemyCounter; i--){
+        Enemy *enemy = enemies[i-1];
+        removeItem(enemy);
+        delete enemy;
+        qDebug() << i;
+    }
+    update();
+}
+
+void Scene::helmetProtect(Player *player)
+{
+    player->Protect();
+}
+
+void Scene::shovelChange()
+{
+    for(Brick* brick : eagleBrick){
+        brick -> setWall();
+    }
+}
+
+void Scene::playergetStar()
+{
+    //    bullet->setFast();
+}
+
+void Scene::enemyStop()
+{
+    timerSkill = true;
+    for(int i = enemies.length(); i > enemies.length()-enemyCounter; i--){
+        Enemy *enemy = enemies[i-1];
+        enemy -> stop10sec();
+        qDebug() << i;
+    }
+    QTimer::singleShot(10000, [=]() {
+        timerSkill = false;
+    });
+}
 //控制上下左右鍵使player可以上下左右移動(並且不可以撞到磚塊或牆壁)
 void Scene::player_move()
 {
@@ -359,7 +446,24 @@ void Scene::player_move()
             if(brick || wall || enemy){
                 player_1->setPos(pos_1);
                 return;
-            }
+            } else if (skill){ //grenade, helmet, shovel, star, tank, timer
+                if (skill->getSkillType() == "grenade"){
+                    emit player_grenade();
+                }else if(skill->getSkillType() == "helmet"){
+                    emit player_helmet(player);
+                }else if(skill->getSkillType() == "shovel"){
+                    emit player_shovel();
+                }else if(skill->getSkillType() == "star"){
+                    emit player_star();
+                }else if(skill->getSkillType() == "tank"){
+                    emit player_tank();
+                }else if(skill->getSkillType() == "timer"){
+                    emit player_timer();
+                }else{
+                    qDebug("skillType error");
+                }
+            removeItem(skill);
+            delete skill;
         }
         if(number_of_player==2){                                //有兩個player時才會進入此條件
             QList<QGraphicsItem *> colliding_items_2 = player_2->collidingItems();
@@ -370,8 +474,25 @@ void Scene::player_move()
                 if(brick || wall || enemy){
                     player_2->setPos(pos_2);
                     return;
-                }
-            }
+                } else if (skill){ //grenade, helmet, shovel, star, tank, timer
+                  if (skill->getSkillType() == "grenade"){
+                      emit player_grenade();
+                  }else if(skill->getSkillType() == "helmet"){
+                      emit player_helmet(player);
+                  }else if(skill->getSkillType() == "shovel"){
+                      emit player_shovel();
+                  }else if(skill->getSkillType() == "star"){
+                      emit player_star();
+                  }else if(skill->getSkillType() == "tank"){
+                      emit player_tank();
+                  }else if(skill->getSkillType() == "timer"){
+                      emit player_timer();
+                  }else{
+                      qDebug("skillType error");
+                  }
+                  removeItem(skill);
+                  delete skill;
+                  }
         }
 
     }

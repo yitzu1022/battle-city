@@ -13,14 +13,19 @@ public:
     explicit Player(QObject *parent = nullptr);
     qreal rotation() const;
     void setRotation(qreal newRotation);
+
+    bool isProtect(){return protect;}
+    void Protect();
     void setlife();
     int getlife();
     void setnumber(int n);
     int getnumber();
+
 signals:
 
 private:
     qreal m_rotation;
+    bool protect = false;
     int life=3;
     int number; //註明是player1還是2
 };
