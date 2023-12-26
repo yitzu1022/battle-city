@@ -8,10 +8,11 @@
 #include <QPushbutton>
 #include <QDebug>
 
-ChooseRound::ChooseRound(QWidget *parent) :
-    QWidget(parent),
+ChooseRound::ChooseRound(int number) :
     ui(new Ui::ChooseRound),scene(new ChooseScene(this))
 {
+    playernumber = number;
+    // select one or two player
     ui->setupUi(this);
     scene->setSceneRect(-600,-300,1200,600);
     ui->graphicsView->setScene(scene);
@@ -51,7 +52,7 @@ ChooseRound::ChooseRound(QWidget *parent) :
     QGraphicsProxyWidget *bt2 = scene->addWidget(btn1);
     bt2->setPos(-300,100);
     connect(btn1,&QPushButton::clicked,this,&ChooseRound::OpenSecond);
-    w = new Widget();
+
     s = new SecondWidget();
 
 }
@@ -60,13 +61,12 @@ ChooseRound::ChooseRound(QWidget *parent) :
 
 void ChooseRound::Close()
 {
-    this->close();
+    w = new Widget(playernumber);
     w->show();
 }
 
 void ChooseRound::OpenSecond()
 {
-    this->close();
     s->show();
 }
 

@@ -15,8 +15,12 @@ SOURCES += \
     ChoosesScene.cpp \
     Eagle.cpp \
     Enemy.cpp \
+    Grass.cpp \
+    Ice.cpp \
     Player.cpp \
+    River.cpp \
     Scene.cpp \
+    Skill.cpp \
     Score.cpp \
     ScoreScene.cpp \
     SecondScene.cpp \
@@ -34,8 +38,12 @@ HEADERS += \
     ChooseScene.h \
     Eagle.h \
     Enemy.h \
+    Grass.h \
+    Ice.h \
     Player.h \
+    River.h \
     Scene.h \
+    Skill.h \
     Score.h \
     ScoreScene.h \
     SecondScene.h \

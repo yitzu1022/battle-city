@@ -14,11 +14,12 @@ class ChooseRound : public QWidget
     Q_OBJECT
 
 public:
-    explicit ChooseRound(QWidget *parent = nullptr);
+    explicit ChooseRound(int number=1);
     void Return();
     void Close();
     void OpenSecond();
     ~ChooseRound();
+    int playernumber;
 
 private:
     Ui::ChooseRound *ui;

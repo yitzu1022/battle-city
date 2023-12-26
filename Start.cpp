@@ -49,12 +49,20 @@ Start::Start(QWidget *parent) :
     QGraphicsProxyWidget button3 = scene->addWidget(btn3);
     QGraphicsProxyWidget button4 = scene->addWidget(btn4);
     connect(btn1,&QPushButton::clicked,this,&Start::Close);
-    connect(btn2,&QPushButton::clicked,this,&Start::Close);
-    c = new ChooseRound();
+    connect(btn2,&QPushButton::clicked,this,&Start::Close2);
+
 }
 
 void Start::Close()
 {
+    c = new ChooseRound(1);
+    c->show();
+    this->close();
+}
+
+void Start::Close2()
+{
+    c = new ChooseRound(2);
     c->show();
     this->close();
 }

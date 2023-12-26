@@ -12,7 +12,7 @@ class SecondWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit SecondWidget(QWidget *parent = nullptr);
+    explicit SecondWidget(int number=1);
     ~SecondWidget();
 
 private:

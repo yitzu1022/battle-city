@@ -8,44 +8,75 @@
 #include "Wall.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "Skill.h"
 #include "Score.h"
 
 class Scene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit Scene(QObject *parent = nullptr,Score *score=nullptr);
+    explicit Scene(QObject *parent = nullptr,Score *score=nullptr,int number=1);
     void setBrickwall(int brickFirst_x,int brickFirst_y,int num_x,int num_y);
+    void setEagleBrickWall();
     void setenemy(int x);
     void setplayerlife(Player *player);
     void spawnEnemy() ;
+    void setplayerlife();
 public slots: //slots function
     void handleBrickDeleted(Bullet *bullet, Brick *brick);
     void GameEndded(Bullet *bullet, Eagle *eagle);
     void enemyDestroy(Bullet *bullet, Enemy *enemy);
     void loseOneLife(Bullet *bullet, Player *player);
     void handleBulletDeleted(Bullet *bullet);
+
+    //skill
+    void addOneLife();
+    void grenadeBoom();
+    void helmetProtect(Player *player);
+    void shovelChange();
+    void playergetStar();
+    void enemyStop();
+    void player_move();
     void togglePause();
+
 signals:
+    //grenade, helmet, shovel, star, tank, timer
+    void player_grenade();
+    void player_helmet(Player *player);
+    void player_shovel();
+    void player_star();
+    void player_tank();
+    void player_timer();
     void gameover();
 
 private:
     Eagle *eagle;
     Brick *brick;
     Brick *brickFirst;
+    QList<Brick*> eagleBrick;
     Wall *wall;
-    Player *player;
+    Player *player_1;
+    Player *player_2;
+    QTimer *keyRespondTimer;
     Enemy *enemy;
+    QList<Enemy*> enemies;
+    bool timerSkill = false;
     QTimer *timer ;
+    Skill *skill;
     int enemyCounter;
     int enemyslain = 0;
+    int enemyTotal=0;
+    int armorlife=4;
     bool isPaused=false;
     QGraphicsTextItem *text;
     QGraphicsTextItem *textlife;
     QGraphicsTextItem *textenemylife;
     Score *sc;
+    int number_of_player;
+    QList<int> keys;
 protected:
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 };
 
 #endif // SCENE_H

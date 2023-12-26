@@ -15,7 +15,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
+    Widget(int number=1);
     void Close();
     ~Widget();
 

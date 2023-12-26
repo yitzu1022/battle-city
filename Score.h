@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "ScoreScene.h"
+#include <QFile>
 namespace Ui {
 class Score;
 }
@@ -17,10 +18,13 @@ public:
     int getscore();
     void setscore(int x);
     ~Score();
+    QString filehighest = "highest.txt";
+    int highest=0;
 
 private:
     Ui::Score *ui;
     int score=0;
+
     ScoreScene *scene;
     QGraphicsTextItem *text;
 };

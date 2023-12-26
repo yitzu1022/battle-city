@@ -1,10 +1,10 @@
 #include "Player.h"
+#include <QTimer>
 
 Player::Player(QObject *parent)
     : QObject{parent}
 {
-    setPixmap(QPixmap(":/images/tank.png"));
-
+    setPixmap(QPixmap(":/images/player.png"));
 
 }
 
@@ -26,14 +26,38 @@ void Player::setRotation(qreal newRotation)
     setTransform(t); //apply 此 transformation
 }
 
+void Player::Protect()
+{
+    protect = true;
+    qDebug("protect = %d" ,protect);
+    QTimer::singleShot(10000, [=]() {
+        protect = false;
+        qDebug("protect = %d" ,protect);
+    });
+}
 void Player::setlife()
 {
     life--;
 }
 
+void Player::resetlife()
+{
+    life = 3;
+}
+
 int Player::getlife()
 {
     return life;
+}
+
+void Player::setnumber(int n)
+{
+    number=n;
+}
+
+int Player::getnumber()
+{
+    return number;
 }
 
 
