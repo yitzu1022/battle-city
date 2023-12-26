@@ -245,18 +245,18 @@ void Scene::GameEndded(Bullet *bullet, Eagle *eagle)
 
 void Scene::enemyDestroy(Bullet *bullet, Enemy *enemy)
 {
-    //if (enemy->isSpecial() == 1){ //如果是特殊敵人
-    Skill *skill = new Skill();
-    skill->setPos(enemy->pos());
-    connect(this, &Scene::player_tank, this, &Scene::addOneLife);
-    connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
-    connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
-    connect(this, &Scene::player_shovel, this, &Scene::shovelChange);
-    connect(this, &Scene::player_star, this, &Scene::playergetStar);
-    connect(this, &Scene::player_timer, this, &Scene::enemyStop);
-    addItem(skill);
-    skill->setZValue(1);
-    //}
+    if(enemy-> kindof == 4){
+        Skill *skill = new Skill();
+        skill->setPos(enemy->pos());
+        connect(this, &Scene::player_tank, this, &Scene::addOneLife);
+        connect(this, &Scene::player_grenade, this, &Scene::grenadeBoom);
+        connect(this, &Scene::player_helmet, this, &Scene::helmetProtect);
+        connect(this, &Scene::player_shovel, this, &Scene::shovelChange);
+        connect(this, &Scene::player_star, this, &Scene::playergetStar);
+        connect(this, &Scene::player_timer, this, &Scene::enemyStop);
+        addItem(skill);
+        skill->setZValue(1);
+    }
     removeItem(bullet);
     delete bullet;
     if(enemy-> kindof == 1)//是armor坦克
@@ -443,14 +443,15 @@ void Scene::player_move()
             Brick *brick = dynamic_cast<Brick*>(item);
             Wall *wall = dynamic_cast<Wall*>(item);
             Enemy *enemy = dynamic_cast<Enemy*>(item);
+            Skill *skill = dynamic_cast<Skill*>(item);
             if(brick || wall || enemy){
                 player_1->setPos(pos_1);
                 return;
-            } else if (skill){ //grenade, helmet, shovel, star, tank, timer
+            }else if (skill){ //grenade, helmet, shovel, star, tank, timer
                 if (skill->getSkillType() == "grenade"){
                     emit player_grenade();
                 }else if(skill->getSkillType() == "helmet"){
-                    emit player_helmet(player);
+                    emit player_helmet(player_1);
                 }else if(skill->getSkillType() == "shovel"){
                     emit player_shovel();
                 }else if(skill->getSkillType() == "star"){
@@ -471,34 +472,34 @@ void Scene::player_move()
                 Brick *brick = dynamic_cast<Brick*>(item);
                 Wall *wall = dynamic_cast<Wall*>(item);
                 Enemy *enemy = dynamic_cast<Enemy*>(item);
+                Skill *skill = dynamic_cast<Skill*>(item);
                 if(brick || wall || enemy){
                     player_2->setPos(pos_2);
                     return;
-                } else if (skill){ //grenade, helmet, shovel, star, tank, timer
-                  if (skill->getSkillType() == "grenade"){
-                      emit player_grenade();
-                  }else if(skill->getSkillType() == "helmet"){
-                      emit player_helmet(player);
-                  }else if(skill->getSkillType() == "shovel"){
-                      emit player_shovel();
-                  }else if(skill->getSkillType() == "star"){
-                      emit player_star();
-                  }else if(skill->getSkillType() == "tank"){
-                      emit player_tank();
-                  }else if(skill->getSkillType() == "timer"){
-                      emit player_timer();
-                  }else{
-                      qDebug("skillType error");
-                  }
-                  removeItem(skill);
-                  delete skill;
-                  }
+                }else if (skill){ //grenade, helmet, shovel, star, tank, timer
+                if (skill->getSkillType() == "grenade"){
+                    emit player_grenade();
+                }else if(skill->getSkillType() == "helmet"){
+                    emit player_helmet(player_2);
+                }else if(skill->getSkillType() == "shovel"){
+                    emit player_shovel();
+                }else if(skill->getSkillType() == "star"){
+                    emit player_star();
+                }else if(skill->getSkillType() == "tank"){
+                    emit player_tank();
+                }else if(skill->getSkillType() == "timer"){
+                    emit player_timer();
+                }else{
+                    qDebug("skillType error");
+                }
+                removeItem(skill);
+                delete skill;
+                }
+            }
         }
-
     }
-
 }
-
+}
 void Scene::togglePause()
 {
     isPaused = !isPaused;

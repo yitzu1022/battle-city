@@ -34,7 +34,7 @@ void Player::Protect()
         protect = false;
         qDebug("protect = %d" ,protect);
     });
-
+}
 void Player::setlife()
 {
     life--;
@@ -53,6 +53,6 @@ void Player::setnumber(int n)
 int Player::getnumber()
 {
     return number;
-
+}
 
 

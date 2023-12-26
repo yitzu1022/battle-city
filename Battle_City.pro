@@ -43,7 +43,8 @@ HEADERS += \
     Player.h \
     River.h \
     Scene.h \
-    Skill.h \Score.h \
+    Skill.h \
+    Score.h \
     ScoreScene.h \
     SecondScene.h \
     Secondwidget.h \

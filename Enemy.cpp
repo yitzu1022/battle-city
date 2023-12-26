@@ -78,7 +78,7 @@ void Enemy::stop10sec()
     QTimer::singleShot(10000, [=]() {
         timer->start();
     });
-
+}
 void Enemy::setPause()
 {
      isPaused = !isPaused;
