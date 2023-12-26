@@ -2,8 +2,7 @@
 #include "ui_Secondwidget.h"
 #include <QGraphicsPixmapItem>
 
-SecondWidget::SecondWidget(QWidget *parent) :
-    QWidget(parent),
+SecondWidget::SecondWidget(int number) :
     ui(new Ui::SecondWidget),scene(new SecondScene())
 {
     ui->setupUi(this);
@@ -15,6 +14,7 @@ SecondWidget::SecondWidget(QWidget *parent) :
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setFixedSize(1200,600);
+
 }
 
 SecondWidget::~SecondWidget()

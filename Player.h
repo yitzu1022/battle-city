@@ -16,8 +16,8 @@ public:
 
     bool isProtect(){return protect;}
     void Protect();
-    void setlife(); // minus one life
-    void addlife();
+    void setlife();
+    void resetlife();
     int getlife();
     void setnumber(int n);
     int getnumber();

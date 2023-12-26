@@ -41,6 +41,7 @@ void Bullet::move() {
             return;
         }
         else if (eagle) {
+            qDebug() << "eagle_bullet";
             emit bulletHitsEagle(this, eagle);
             return;
         }
@@ -67,9 +68,9 @@ void Bullet::move() {
     }
 
     int dx;
-    dx=10*qCos(qDegreesToRadians(rotation()-90));
+    dx=speed*qCos(qDegreesToRadians(rotation()-90));
     int dy;
-    dy=10*qSin(qDegreesToRadians(rotation()-90));
+    dy=speed*qSin(qDegreesToRadians(rotation()-90));
     setPos(x()+dx,y()+dy);
 
 
@@ -91,6 +92,12 @@ qreal Bullet::rotation() const
     return m_rotation;
 }
 
+void Bullet::setFast()
+{
+    if (isMyBullet = true){
+        speed = 20;
+    }
+}
 
 void Bullet::setRotation(qreal newRotation)
 {

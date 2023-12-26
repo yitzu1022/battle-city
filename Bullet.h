@@ -11,8 +11,6 @@
 #include <QTimer>
 class Bullet : public QObject, public QGraphicsPixmapItem
 {
-    friend class Enemy;
-    friend class Scene;
     Q_OBJECT
 public:
     Bullet(bool isMyBullet = false);
@@ -20,6 +18,7 @@ public:
     void setRotation(qreal newRotation);
     qreal rotation() const;
 
+    void setFast();
 
 private slots:
     void move();
@@ -39,9 +38,10 @@ public slots:
 
 private:
     QTimer *timer;
+    int speed = 10;
     bool isMyBullet;
     qreal m_rotation;
-
+friend class Enemy;
 };
 
 #endif // BULLET_H

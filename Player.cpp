@@ -39,9 +39,9 @@ void Player::setlife()
     life--;
 }
 
-void Player::addlife()
+void Player::resetlife()
 {
-    life++;
+    life = 3;
 }
 
 int Player::getlife()

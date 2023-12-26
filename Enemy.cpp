@@ -16,27 +16,27 @@ Enemy::Enemy(QObject *parent,int kind)
 {
     if(kind == 0)
     {
-        setPixmap(QPixmap(":/images/enemy.png").scaled(25,25,Qt::KeepAspectRatio));
+        setPixmap(QPixmap(":/images/enemy.png"));
         kindof = 0;
     }
     if(kind == 1)
     {
-        setPixmap(QPixmap(":/images/Armor_tank.png").scaled(30,30,Qt::KeepAspectRatio));
+        setPixmap(QPixmap(":/images/Armor_tank.png"));
         kindof = 1;
     }
     if(kind == 2)
     {
-        setPixmap(QPixmap(":/images/Fast_tank.png").scaled(30,30,Qt::KeepAspectRatio));
+        setPixmap(QPixmap(":/images/Fast_tank.png"));
         kindof = 2 ;
     }
     if(kind == 3)
     {
-        setPixmap(QPixmap(":/images/Power_tank.png").scaled(30,30,Qt::KeepAspectRatio));
+        setPixmap(QPixmap(":/images/Power_tank.png"));
         kindof = 3 ;
     }
     if(kind == 4)
     {
-        setPixmap(QPixmap(":/images/Special_enemy.png").scaled(30,30,Qt::KeepAspectRatio));
+        setPixmap(QPixmap(":/images/Special_enemy.png"));
         kindof =4;
     }
     timer = new QTimer() ;
