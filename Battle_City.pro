@@ -20,6 +20,7 @@ SOURCES += \
     Player.cpp \
     River.cpp \
     Scene.cpp \
+    Skill.cpp \
     Score.cpp \
     ScoreScene.cpp \
     SecondScene.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     Player.h \
     River.h \
     Scene.h \
+    Skill.h \
     Score.h \
     ScoreScene.h \
     SecondScene.h \

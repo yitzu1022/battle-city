@@ -11,8 +11,13 @@ public:
     explicit Brick();
     virtual ~Brick();
 
+    void setWall();
+    bool isProtect(){return protect;}
+
 signals:
 
+private:
+    bool protect = false;
 };
 
 #endif // BRICK_H

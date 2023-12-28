@@ -4,9 +4,14 @@
         <file>brick.png</file>
         <file>wall.jpg</file>
         <file>Eagle.png</file>
-        <file>tank.png</file>
         <file>enemy.png</file>
         <file>bullet.png</file>
+        <file>grenade.png</file>
+        <file>helmet.png</file>
+        <file>shovel.png</file>
+        <file>timer.png</file>
+        <file>star.png</file>
+        <file>player.png</file>
         <file>btcity.png</file>
         <file>level1.png</file>
         <file>home.png</file>
@@ -19,5 +24,8 @@
         <file>Fast_tank.png</file>
         <file>Power_tank.png</file>
         <file>Special_enemy.png</file>
+        <file>protect.png</file>
+        <file>tank.png</file>
+        <file>player2.png</file>
     </qresource>
 </RCC>

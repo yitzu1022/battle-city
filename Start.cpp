@@ -30,8 +30,6 @@ Start::Start(QWidget *parent) :
     QPushButton *btn2 = new QPushButton("two players",this);
     QPushButton *btn3 = new QPushButton("classification",this);
     QPushButton *btn4 = new QPushButton("configuration",this);
-    qDebug() << this->width();
-    qDebug() << this->height();
     btn1->setFixedSize(this->width()/5,this->height()/12);
     btn1->move(500,360);
     btn2->setFixedSize(this->width()/5,this->height()/12);
@@ -48,13 +46,25 @@ Start::Start(QWidget *parent) :
     QGraphicsProxyWidget button2 = scene->addWidget(btn2);
     QGraphicsProxyWidget button3 = scene->addWidget(btn3);
     QGraphicsProxyWidget button4 = scene->addWidget(btn4);
+
+    // new a button of one player and two player and set up their pos
     connect(btn1,&QPushButton::clicked,this,&Start::Close);
-    connect(btn2,&QPushButton::clicked,this,&Start::Close);
-    c = new ChooseRound();
+    connect(btn2,&QPushButton::clicked,this,&Start::Close2);
+
 }
 
 void Start::Close()
 {
+    // new a choose round window with two player
+    c = new ChooseRound(1);
+    c->show();
+    this->close();
+}
+
+void Start::Close2()
+{
+    // new a choose round window with two player
+    c = new ChooseRound(2);
     c->show();
     this->close();
 }

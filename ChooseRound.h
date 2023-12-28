@@ -5,6 +5,7 @@
 #include "ChooseScene.h"
 #include "widget.h"
 #include "Secondwidget.h"
+#include "Scene.h"
 namespace Ui {
 class ChooseRound;
 }
@@ -14,15 +15,17 @@ class ChooseRound : public QWidget
     Q_OBJECT
 
 public:
-    explicit ChooseRound(QWidget *parent = nullptr);
+    explicit ChooseRound(int number=1);
     void Return();
-    void Close();
-    void OpenSecond();
+    void OpenRound1();
+    void OpenRound2();
     ~ChooseRound();
+    int playernumber;
 
 private:
     Ui::ChooseRound *ui;
     ChooseScene *scene;
+    Scene *gameScene;
     Widget *w;
     SecondWidget *s;
 

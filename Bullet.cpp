@@ -5,8 +5,10 @@
 
 Bullet::Bullet(bool isMyBullet): isMyBullet(isMyBullet)
 {
+    //set bullet picture
     setPixmap(QPixmap(":/images/bullet.png").scaled(25,25,Qt::KeepAspectRatio));
 
+    //timer for bullet move()
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Bullet::move);
     timer->start(50);
@@ -17,52 +19,68 @@ void Bullet::move() {
     if (scene() == nullptr || !scene()->sceneRect().contains(pos())) {
         // Remove the bullet from the scene first
         scene()->removeItem(this);
-        qDebug("bullet deleted");
         delete this;
         return;
     }
 
-    // If the bullet collides either Brick, Eagle, Enemy or Player, destroy both
-    // if the bullet is out of Scene, it also should be delete ...add
+    // If the bullet collides either Brick, Wall, Eagle, Enemy or Player, sent signal
     QList<QGraphicsItem *> colliding_items = collidingItems();
     foreach (QGraphicsItem *item, colliding_items) {
-        if (dynamic_cast<Brick *>(item)) {
-            emit bulletHitsBrick(this, dynamic_cast<Brick *>(item));
+        Brick *brick = dynamic_cast<Brick*>(item);
+        Wall *wall = dynamic_cast<Wall*>(item);
+        Enemy *enemy = dynamic_cast<Enemy*>(item);
+        Player *player = dynamic_cast<Player*>(item);
+        Eagle *eagle = dynamic_cast<Eagle*>(item);
+        Bullet *bullet = dynamic_cast<Bullet*>(item);
+        if (brick && brick->isProtect() == false) {
+            emit bulletHitsBrick(this, brick);
             return;
         }
-        else if (dynamic_cast<Eagle *>(item)) {
-            emit bulletHitsEagle(this, dynamic_cast<Eagle *>(item));
+        else if (brick && brick->isProtect() == true){ // if brick isProtect, it is seen as wall and can't be destroy
+            emit bullet_bullet(this, bullet);
             return;
         }
-        else if (dynamic_cast<Enemy *>(item) && isMine() == true) {
-            emit bulletHitsEnemy(this, dynamic_cast<Enemy *>(item));
+        else if (eagle) {
+            emit bulletHitsEagle(this, eagle);
             return;
         }
-//        else if (dynamic_cast<Enemy *>(item) && isMine() == false) {
-//            emit bulletDeleted(this);
-//            return;
-//        }
-        else if (dynamic_cast<Player *>(item) && isMine() == false) {
-            emit bulletHitsPlayer(this, dynamic_cast<Player *>(item));
+        else if (enemy && isMine() == true) { // if bullet that hit the enemy is shot by player
+            emit bulletHitsEnemy(this, enemy);
             return;
         }
-        else if (dynamic_cast<Bullet *>(item)){ // bullet hits bullet
-            emit bullet_bullet(this, dynamic_cast<Bullet *>(item));
+        else if (player && isMine() == false && player->isProtect() == false) { // if bullet that hit the player is shot by enemy and player is not Protected
+            emit bulletHitsPlayer(this, player);
+            return;
+        }
+        else if (bullet){ // bullet hits bullet
+            emit bullet_bullet(this, bullet);
+            return;
+        }
+        else if (wall){ //bullet hits wall is same as bullet hit bullet (only bullet should be destroy)
+            emit bullet_bullet(this, bullet);
             return;
         }
     }
 
-    // Move the bullet up
-    // Should be change by direction
-    // if direction .....
-    //setPos(x(), y()-10);
+    // get bullet fly
     int dx;
-    dx=10*qCos(qDegreesToRadians(rotation()-90));
+    dx=speed*qCos(qDegreesToRadians(rotation()-90));
     int dy;
-    dy=10*qSin(qDegreesToRadians(rotation()-90));
+    dy=speed*qSin(qDegreesToRadians(rotation()-90));
     setPos(x()+dx,y()+dy);
 
 
+}
+
+void Bullet::stop()
+{
+    timer->stop();
+    qDebug() << "bullet stop";
+}
+
+void Bullet::start()
+{
+    timer->start();
 }
 
 qreal Bullet::rotation() const

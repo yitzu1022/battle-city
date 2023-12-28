@@ -6,12 +6,15 @@
 #include <QGraphicsProxyWidget>
 #include <QMessageBox>
 
-Widget::Widget(QWidget *parent)
+
+Widget::Widget(QWidget *parent, int Round, int number)
     : QWidget(parent)
-    , ui(new Ui::Widget)
+    , ui(new Ui::Widget), Round(Round)
 {
     score = new Score();
-    scene =new Scene(this,score);
+    qDebug() << "new score";
+    scene =new Scene(this,score,Round,number);
+    qDebug() << "new scene";
     ui->setupUi(this);
     scene->setSceneRect(-600,-300,1200,600);  //設置Scene的大小與座標，並要使原點在中間，前兩位為設置左上角的座標(y座標往上為負，往下為正)
     QPixmap pixmap(":/images/background.jpg");
@@ -30,33 +33,55 @@ Widget::Widget(QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setFixedSize(1200,600);
+
+    // create close the game button
     QPushButton *btnX = new QPushButton("X");
     btnX->setFixedSize(30,30);
     btnX->setStyleSheet("font-size:20px ; background-color:Dark ; color:black");
     QGraphicsProxyWidget *buttonX =scene->addWidget(btnX);
+    qDebug() << "buttonX create" ;
     buttonX->setPos(540,-280);
     buttonX->setZValue(5);
+
     connect(btnX,&QPushButton::clicked,[&](){
-        int reply ;
-        reply = QMessageBox::question(this,"Confirmation","Do you really want to quit?",
-                                      QMessageBox::Yes | QMessageBox::No);
-        if (reply==QMessageBox::Yes){
+        qDebug() << "buttonX";
+        QMessageBox msg;
+        msg.setText("Do you want to quit?");
+        qDebug() << "messagebox create";
+        QPushButton *button1 = msg.addButton("quit and save", QMessageBox::YesRole);
+        QPushButton *button2 = msg.addButton("quit and dont't save ", QMessageBox::NoRole);
+        QPushButton *button3 = msg.addButton("No", QMessageBox::RejectRole);
+
+        QGraphicsProxyWidget *btn1 = scene->addWidget(button1);
+        QGraphicsProxyWidget *btn2 = scene->addWidget(button2);
+        QGraphicsProxyWidget *btn3 = scene->addWidget(button3);
+        connect(button1,&QPushButton::clicked,[&]{
             this->close();
-        }else{
+            scene->saveNowData(Round);
+            qDebug() << "button1 quit and save";
+            scene->clear();
+            delete score;
+        });
+        connect(button2,&QPushButton::clicked,[&]{
+            this->close();
+            qDebug() << "button2 quit";
+            scene->clear();
+            delete score;
+        });
+        connect(button3,&QPushButton::clicked,[&]{
+            msg.done(QMessageBox::Close);
+            qDebug() << "button3 message box close";
+        });
+        msg.exec();
 
-        }
     });
-    connect(scene,&Scene::gameover,this,&Widget::Close);
+    connect(scene,&Scene::gameover,[&]{
+        score->setup(Round);
+        score->show();
+        this->close();
+        qDebug() << "gameover";
+    });
 }
-
-void Widget::Close()
-{
-    score->setup();
-    score->show();
-    this->close();
-}
-
-
 
 Widget::~Widget()
 {

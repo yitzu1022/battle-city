@@ -15,6 +15,7 @@ class Start : public QWidget
 public:
     explicit Start(QWidget *parent = nullptr);
     void Close();
+    void Close2();
     ~Start();
     ChooseRound *c;
 

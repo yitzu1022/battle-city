@@ -15,13 +15,13 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
-    void Close();
+    Widget(QWidget *parent = nullptr, int Round=0, int number=1);
     ~Widget();
 
 private:
     Ui::Widget *ui;
     Scene *scene;
     Score *score;
+    int Round;
 };
 #endif // WIDGET_H
