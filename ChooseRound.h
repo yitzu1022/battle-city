@@ -4,7 +4,6 @@
 #include <QWidget>
 #include "ChooseScene.h"
 #include "widget.h"
-#include "Secondwidget.h"
 #include "Scene.h"
 namespace Ui {
 class ChooseRound;
@@ -27,7 +26,6 @@ private:
     ChooseScene *scene;
     Scene *gameScene;
     Widget *w;
-    SecondWidget *s;
 
 };
 

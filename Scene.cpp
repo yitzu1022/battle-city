@@ -666,6 +666,7 @@ void Scene::grenadeBoom()
     for(int i = enemies.length(); i > k; i--){
         Enemy *enemy = enemies[i-1];
         removeItem(enemy);
+        delete enemy;
         qDebug() << i;
         enemyslain++;
         enemyCounter--;
